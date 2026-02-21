@@ -2,14 +2,22 @@
   "hooks": {
     "Edit": [
       {
-        "matcher": "**/*.{ts,tsx,mts}",
-        "command": "oxfmt --write \"$FILE_PATH\" && oxlint --tsconfig apps/portfolio/tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious \"$FILE_PATH\""
+        "matcher": "apps/portfolio/**/*.{ts,tsx,mts}",
+        "command": "cd apps/portfolio && bunx oxfmt --write \"$FILE_PATH\" && bunx oxlint --tsconfig tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious -A react-in-jsx-scope \"$FILE_PATH\""
+      },
+      {
+        "matcher": "packages/ui/**/*.{ts,tsx,mts}",
+        "command": "cd packages/ui && bunx oxfmt --write \"$FILE_PATH\""
       }
     ],
     "Write": [
       {
-        "matcher": "**/*.{ts,tsx,mts}",
-        "command": "oxfmt --write \"$FILE_PATH\" && oxlint --tsconfig apps/portfolio/tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious \"$FILE_PATH\""
+        "matcher": "apps/portfolio/**/*.{ts,tsx,mts}",
+        "command": "cd apps/portfolio && bunx oxfmt --write \"$FILE_PATH\" && bunx oxlint --tsconfig tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious -A react-in-jsx-scope \"$FILE_PATH\""
+      },
+      {
+        "matcher": "packages/ui/**/*.{ts,tsx,mts}",
+        "command": "cd packages/ui && bunx oxfmt --write \"$FILE_PATH\""
       }
     ]
   }

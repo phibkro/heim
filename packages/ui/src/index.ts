@@ -1,2 +1,1 @@
-// @heim/ui — blueprint design system components
-// Components will be added in Phase 4
+export type { ComponentProps } from "react"
