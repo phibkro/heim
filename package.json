@@ -8,6 +8,8 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "oxfmt": "^0.34.0",
+    "oxlint": "^1.49.0",
     "turbo": "^2.8.10",
     "typescript": "5.9.2"
   },
@@ -18,5 +20,6 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {}
 }
