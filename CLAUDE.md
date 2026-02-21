@@ -77,12 +77,12 @@ heim/
 
 ## Gotchas
 
-- `DATABASE_URI` not `DATABASE_URL` — Payload config uses this env var name
+- Payload config accepts `DATABASE_URI` or `DATABASE_URL` (Neon's Vercel integration sets `DATABASE_URL`)
 - Payload `defaultSort` is a top-level CollectionConfig property, not under `admin`
 - Client components using `useSearchParams` must be wrapped in `<Suspense>`
 - `next.config.ts` "turbopack" warning is from `withPayload` — safe to ignore
 - React/React-dom hoisted to monorepo root; `@heim/ui` uses `peerDependencies`
-- Next.js must stay in Payload's supported range (currently 15.2.x)
+- Next.js must stay in Payload's supported range (currently 16.2.0-canary.x or 15.2.x)
 
 ---
 
