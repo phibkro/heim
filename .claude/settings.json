@@ -1,23 +1,16 @@
 {
   "hooks": {
-    "Edit": [
+    "PostToolUse": [
       {
-        "matcher": "apps/portfolio/**/*.{ts,tsx}",
-        "command": "cd apps/portfolio && bunx oxfmt --write $FILE_PATH && bunx oxlint --tsconfig tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious -A react-in-jsx-scope $FILE_PATH"
-      },
-      {
-        "matcher": "packages/ui/**/*.{ts,tsx}",
-        "command": "cd packages/ui && bunx oxfmt --write $FILE_PATH"
-      }
-    ],
-    "Write": [
-      {
-        "matcher": "apps/portfolio/**/*.{ts,tsx}",
-        "command": "cd apps/portfolio && bunx oxfmt --write $FILE_PATH && bunx oxlint --tsconfig tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious -A react-in-jsx-scope $FILE_PATH"
-      },
-      {
-        "matcher": "packages/ui/**/*.{ts,tsx}",
-        "command": "cd packages/ui && bunx oxfmt --write $FILE_PATH"
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format-lint.sh",
+            "timeout": 30,
+            "statusMessage": "Formatting and linting..."
+          }
+        ]
       }
     ]
   }
