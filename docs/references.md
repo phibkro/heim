@@ -19,7 +19,7 @@ When implementing a tool for the first time, read the official docs before writi
 | Tool | Docs |
 |---|---|
 | Neon (PostgreSQL) | https://neon.tech/docs |
-| Payload Drizzle adapter | https://payloadcms.com/docs/database/drizzle |
+| Payload Postgres adapter | https://payloadcms.com/docs/database/postgres |
 
 ## Styling & UI
 

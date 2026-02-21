@@ -64,10 +64,10 @@ fields:
   - date: date, required
   - tags: relationship → Tags, hasMany: true
   - linkedPost: relationship → Posts, hasMany: false (optional)
+defaultSort: '-date'
 admin:
   useAsTitle: 'content'
   defaultColumns: ['content', 'date', 'tags']
-  defaultSort: '-date'
 ```
 
 ---
@@ -175,7 +175,7 @@ Override Tailwind Typography's default prose colors in `globals.css` to match de
 ```
 app/
   (frontend)/
-    layout.tsx            ← fonts, globals, PostHog provider
+    layout.tsx            ← globals.css, Header, Footer
     page.tsx              ← homepage
     projects/page.tsx
     writing/

@@ -15,7 +15,7 @@ Read this file first. For detailed specs, read the relevant doc in `docs/` befor
 | `docs/architecture.md` | Building any route, data fetching, or collection |
 | `docs/design-system.md` | Building any UI component or page |
 | `docs/references.md` | Looking up official docs for any tool |
-| `prototype.html` | Visual ground truth — open this whenever building UI |
+| `docs/prototype.html` | Visual ground truth — open this whenever building UI |
 
 ---
 
@@ -63,6 +63,39 @@ heim/
 - Colocate types with their collection definitions
 - Formatter: oxfmt — runs on save/edit hooks, do not configure manually
 - Linter: oxlint — runs on save/edit hooks, do not configure manually
+
+---
+
+## Commands
+
+- `bun run dev` — start dev server (turbo)
+- `bun run check-types` — typecheck all packages (turbo)
+- `cd apps/portfolio && bun -e "import c from './payload.config'; import {generateTypes} from 'payload/node'; await generateTypes(await c); process.exit(0)"` — regenerate Payload types (`payload generate:types` CLI doesn't resolve .ts imports)
+- `bunx shadcn add <component>` — add shadcn component (run from `apps/portfolio/`)
+
+---
+
+## Gotchas
+
+- `DATABASE_URI` not `DATABASE_URL` — Payload config uses this env var name
+- Payload `defaultSort` is a top-level CollectionConfig property, not under `admin`
+- Client components using `useSearchParams` must be wrapped in `<Suspense>`
+- `next.config.ts` "turbopack" warning is from `withPayload` — safe to ignore
+- React/React-dom hoisted to monorepo root; `@heim/ui` uses `peerDependencies`
+- Next.js must stay in Payload's supported range (currently 15.2.x)
+
+---
+
+## Payload Collections
+
+| Collection | Slug | Key fields |
+|---|---|---|
+| Tags | `tags` | name (unique), slug (auto-gen) |
+| Posts | `posts` | title, slug, content (richText), excerpt, publishedAt, tags, status |
+| Projects | `projects` | name, slug, description, longDescription (richText), url, repoUrl, year, featured, tags, order |
+| NowEntries | `now-entries` | content (max 200), date, tags, linkedPost |
+
+All collections have `afterChange` hooks for on-demand ISR via `/api/revalidate`.
 
 ---
 

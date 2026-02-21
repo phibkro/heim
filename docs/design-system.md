@@ -148,71 +148,40 @@ oklch alpha syntax: `oklch(L% C H / alpha)`. The alpha on `--line` and `--line-s
 
 ## Typography
 
-```ts
-// tokens/typography.ts
-export const fonts = {
-  display: "'Bebas Neue', sans-serif",    // hero, section names, project titles
-  mono:    "'IBM Plex Mono', monospace",  // body, labels, metadata — everything else
-}
+All typography is handled via CSS variables and Tailwind utility classes — no TS token files.
 
-export const fontSizes = {
-  xxs:  '0.45rem',               // nav index numbers
-  xs:   '0.5rem',                // labels, tags, annotations
-  sm:   '0.58rem',               // secondary text, metadata
-  base: '0.72rem',               // body copy, descriptions
-  md:   '0.85rem',               // post titles
-  lg:   '1.1rem',                // section headers (display font)
-  xl:   '1.6rem',                // project names (display font)
-  hero: 'clamp(3.5rem, 7vw, 7rem)', // hero headline
-}
+| Token | Value | Usage |
+|---|---|---|
+| `--font-display` | Bebas Neue | Hero, section names, project titles |
+| `--font-mono` | IBM Plex Mono | Body, labels, metadata — everything else |
 
-export const fontWeights = {
-  light:   300,
-  regular: 400,
-  medium:  500,
-}
+Configured via `next/font` in `app/layout.tsx` (root layout).
 
-export const letterSpacing = {
-  tight:  '-0.02em',  // display headlines
-  normal:  '0em',
-  wide:    '0.08em',  // metadata
-  wider:   '0.12em',  // labels, tags
-  widest:  '0.18em',  // logo subtitle
-}
-```
+| Size | Value | Usage |
+|---|---|---|
+| xxs | `0.45rem` | Nav index numbers |
+| xs | `0.5rem` | Labels, tags, annotations |
+| sm | `0.58rem` | Secondary text, metadata |
+| base | `0.72rem` | Body copy, descriptions |
+| md | `0.85rem` | Post titles |
+| lg | `1.1rem` | Section headers (display font) |
+| xl | `1.6rem` | Project names (display font) |
+| hero | `clamp(3.5rem, 7vw, 7rem)` | Hero headline |
+
+Font weights: light (300), regular (400), medium (500).
+Letter spacing: tight (-0.02em), normal (0), wide (0.08em), wider (0.12em), widest (0.18em).
 
 ---
 
 ## Spacing
 
-Base-8 scale. All values are multiples of `0.5rem` (8px).
-
-```ts
-// tokens/spacing.ts
-export const space = {
-  1: '0.5rem',  //  8px
-  2: '1rem',    // 16px
-  3: '1.5rem',  // 24px
-  4: '2rem',    // 32px
-  6: '3rem',    // 48px
-  8: '4rem',    // 64px
-}
-```
+Base-8 scale. All values are multiples of `0.5rem` (8px). Use Tailwind spacing utilities directly (`p-2`, `gap-4`, etc.).
 
 ---
 
 ## Borders
 
-All borders are **dashed**, not solid. This is a hard constraint of the blueprint aesthetic — never use `border-solid` anywhere.
-
-```ts
-// tokens/borders.ts
-export const borders = {
-  subtle: '1px dashed var(--line)',
-  strong: '1px dashed var(--line-strong)',
-  accent: '1px dashed var(--accent)',
-}
-```
+All borders are **dashed**, not solid. This is a hard constraint of the blueprint aesthetic — never use `border-solid` anywhere. Use Tailwind `border-dashed` + CSS variable colors (`border-[var(--line)]`, `border-[var(--line-strong)]`, `border-[var(--accent)]`).
 
 ---
 
@@ -386,7 +355,7 @@ npx shadcn@latest init
 
 **Never use** shadcn's default color theme, hardcoded color classes, or `rounded-*` utilities — `--radius: 0` handles corners globally.
 
-Custom blueprint components live in `components/blueprint/`, separate from shadcn's auto-generated `components/ui/`. The distinction matters: `ui/` is generated and can be re-generated; `blueprint/` is yours.
+Custom blueprint components live in `packages/ui/src/components/` (`@heim/ui`), separate from shadcn's auto-generated `apps/portfolio/components/ui/`. The distinction matters: `ui/` is generated and can be re-generated; `@heim/ui` is yours.
 
 ---
 
@@ -404,31 +373,26 @@ Custom blueprint components live in `components/blueprint/`, separate from shadc
 
 ## Responsive Breakpoints
 
-```ts
-// tokens/breakpoints.ts
-export const breakpoints = {
-  sm: '480px',
-  md: '768px',   // main breakpoint — grids collapse, index columns hide
-  lg: '900px',   // header coords hide
-  xl: '1400px',  // max-width cap
-}
-```
+Use Tailwind breakpoint utilities directly (`sm:`, `md:`, `lg:`). Key breakpoint: `md` (768px) — grids collapse and index columns hide.
 
 ---
 
 ## File Structure
 
 ```
-app/
-  globals.css              ← single source of truth — tokens + shadcn overrides
+apps/portfolio/
+  app/(frontend)/
+    globals.css                ← single source of truth — tokens + shadcn overrides
+  components/
+    ui/                        ← shadcn auto-generated (don't hand-edit)
+    layout/
+      Header.tsx
+      Footer.tsx
+      MobileMenu.tsx
+    ScrollReveal.tsx
 
-components/
-  ui/                      ← shadcn auto-generated (don't hand-edit)
-    button.tsx
-    dialog.tsx
-    tooltip.tsx
-    ...
-  blueprint/               ← custom blueprint system
+packages/ui/src/
+  components/                  ← @heim/ui blueprint system
     SectionHeader.tsx
     SpecBlock.tsx
     CrosshairTarget.tsx
@@ -437,15 +401,5 @@ components/
     BlueprintBox.tsx
     AnnotationLabel.tsx
     BtnCrosshair.tsx
-  layout/
-    Header.tsx
-    Footer.tsx
-    MobileMenu.tsx
-
-tokens/
-  typography.ts
-  spacing.ts
-  borders.ts
-  breakpoints.ts
-  index.ts                 ← re-exports everything
+  index.ts                     ← barrel export
 ```
