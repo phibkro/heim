@@ -21,7 +21,7 @@
     "clsx": "^2.1.1",
     "graphql": "^16.8.",
     "lucide-react": "^0.575.0",
-    "next": "15.2.9",
+    "next": "16.2.0-canary.56",
     "payload": "^3.77.0",
     "radix-ui": "^1.4.3",
     "sharp": "^0.34.5",
