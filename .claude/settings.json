@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Edit": [
+      {
+        "matcher": "**/*.{ts,tsx,mts}",
+        "command": "oxfmt --write \"$FILE_PATH\" && oxlint --tsconfig apps/portfolio/tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious \"$FILE_PATH\""
+      }
+    ],
+    "Write": [
+      {
+        "matcher": "**/*.{ts,tsx,mts}",
+        "command": "oxfmt --write \"$FILE_PATH\" && oxlint --tsconfig apps/portfolio/tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious \"$FILE_PATH\""
+      }
+    ]
+  }
+}

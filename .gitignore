@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# build
+.next/
+dist/
+.turbo/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# system
+.DS_Store
+*.pem
+
+# lock
+bun.lock
+
+# debug
+npm-debug.log*

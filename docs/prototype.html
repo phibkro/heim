@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Philip Myrvang — Software Architect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #080c10;
+  --bg2: #0c1118;
+  --fg: #c8d8e8;
+  --dim: #3a4a5a;
+  --muted: #506070;
+  --accent: #4a9abb;
+  --accent2: #7bc4e0;
+  --line: rgba(74, 154, 187, 0.15);
+  --line-strong: rgba(74, 154, 187, 0.3);
+  --dot-size: 24px;
+  --header-h: 57px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(74,154,187,0.18) 1px, transparent 1px);
+  background-size: var(--dot-size) var(--dot-size);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, var(--bg) 100%);
+}
+
+/* ─── HEADER ─── */
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: rgba(8,12,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-logo {
+  padding: 1.2rem 2rem;
+  border-right: 1px dashed var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-decoration: none;
+}
+
+.logo-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.12em;
+  color: var(--fg);
+  line-height: 1;
+}
+
+.logo-sub {
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* live coord display in header */
+.header-coords {
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  border-right: 1px dashed var(--line-strong);
+  transition: color 0.4s;
+  white-space: nowrap;
+}
+
+.header-nav {
+  display: flex;
+  list-style: none;
+  margin-left: auto;
+}
+
+.header-nav li { border-left: 1px dashed var(--line-strong); }
+
+.header-nav a {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1.4rem;
+  height: 100%;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s, background 0.2s;
+  gap: 0.2rem;
+}
+
+.header-nav a .nav-idx { font-size: 0.45rem; color: var(--dim); }
+.header-nav a:hover, .header-nav a.active { color: var(--accent2); background: rgba(74,154,187,0.05); }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 0 1.5rem;
+  cursor: pointer;
+  border: none;
+  border-left: 1px dashed var(--line-strong);
+  background: none;
+}
+
+.hamburger span {
+  display: block;
+  width: 20px; height: 1px;
+  background: var(--muted);
+  transition: all 0.3s;
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8,12,16,0.97);
+  z-index: 40;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--line-strong);
+  margin: 1rem;
+}
+
+.mobile-menu.open { display: flex; }
+
+.mobile-menu a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 1rem 3rem;
+  border-bottom: 1px dashed var(--line);
+  width: 100%;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.mobile-menu a:hover { color: var(--accent2); }
+
+.mobile-close {
+  position: absolute;
+  top: 1.5rem; right: 1.5rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  cursor: pointer;
+  background: none;
+  border: 1px dashed var(--line-strong);
+  padding: 0.4rem 0.8rem;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ─── PAGES ─── */
+.page {
+  display: none;
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: var(--header-h);
+  min-height: 100vh;
+}
+
+.page.active { display: block; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: calc(100vh - var(--header-h));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px dashed var(--line-strong);
+  position: relative;
+}
+
+.hero::before, .hero::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-color: var(--dim);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+
+.hero::before { top: 16px; left: 16px; border-top-width: 1px; border-left-width: 1px; }
+.hero::after  { bottom: 16px; right: 16px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.hero-left {
+  padding: 4rem 3rem;
+  border-right: 1px dashed var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hero-coords-display {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 3rem;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 7vw, 7rem);
+  letter-spacing: 0.05em;
+  line-height: 0.9;
+  color: var(--fg);
+}
+
+.hero-title .hl  { color: var(--accent); display: block; }
+.hero-title .hl2 { color: transparent; -webkit-text-stroke: 1px var(--dim); }
+
+.hero-bottom { margin-top: 3rem; }
+
+.avail-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px dashed var(--line-strong);
+  padding: 0.5rem 1rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.avail-badge .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+  50% { opacity:0.6; box-shadow: 0 0 0 5px rgba(74,222,128,0); }
+}
+
+.hero-desc {
+  font-size: 0.8rem;
+  line-height: 1.9;
+  color: var(--muted);
+  max-width: 42ch;
+}
+
+.hero-right {
+  padding: 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.spec-block {
+  border: 1px dashed var(--line-strong);
+  padding: 1.5rem;
+  position: relative;
+}
+
+.spec-block::before {
+  content: attr(data-label);
+  position: absolute;
+  top: -0.6rem; left: 1rem;
+  background: var(--bg);
+  padding: 0 0.5rem;
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--line);
+  gap: 1rem;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-key { font-size: 0.58rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; flex-shrink: 0; }
+.spec-val { font-size: 0.65rem; color: var(--fg); text-align: right; }
+.spec-val.accent { color: var(--accent2); }
+
+.hero-links {
+  display: flex;
+  gap: 0;
+  margin-top: 2rem;
+}
+
+.hero-link {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px dashed var(--line-strong);
+  border-right-width: 0;
+  text-align: center;
+  transition: all 0.2s;
+}
+.hero-link:last-child { border-right-width: 1px; }
+.hero-link:hover { color: var(--accent2); background: rgba(74,154,187,0.06); border-color: var(--accent); }
+
+/* ─── SECTION SHELL ─── */
+.section {
+  border-bottom: 1px dashed var(--line-strong);
+  position: relative;
+}
+
+
+
+.section-header {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  border-bottom: 1px dashed var(--line-strong);
+  position: sticky;
+  top: var(--header-h);
+  z-index: 10;
+  background: rgba(8,12,16,0.95);
+  backdrop-filter: blur(8px);
+}
+
+.section-num-col {
+  border-right: 1px dashed var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: var(--dim);
+}
+
+.section-title-row {
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  color: var(--fg);
+}
+
+.section-meta {
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* ─── PROJECTS ─── */
+.project-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  border-bottom: 1px dashed var(--line);
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.project-item:last-child { border-bottom: none; }
+.project-item:hover { background: rgba(74,154,187,0.04); }
+.project-item:hover .project-name { color: var(--accent2); }
+.project-item:hover .project-arrow { opacity: 1; transform: translateX(0); }
+
+/* ─── CROSSHAIR MIXIN ─── */
+.crosshair-target { position: relative; }
+
+.crosshair-target::before,
+.crosshair-target::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--accent);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.crosshair-target::before { top: 4px; left: 4px; border-top-width: 1px; border-left-width: 1px; }
+.crosshair-target::after  { bottom: 4px; right: 4px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.project-item:hover .crosshair-target::before,
+.project-item:hover .crosshair-target::after,
+.post-item:hover .crosshair-target::before,
+.post-item:hover .crosshair-target::after,
+.now-entry:hover .crosshair-target::before,
+.now-entry:hover .crosshair-target::after { opacity: 1; }
+
+/* crosshair buttons */
+.btn-crosshair { position: relative; }
+
+.btn-crosshair::before,
+.btn-crosshair::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  border-color: var(--accent);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.btn-crosshair::before { top: 3px; left: 3px; border-top-width: 1px; border-left-width: 1px; }
+.btn-crosshair::after  { bottom: 3px; right: 3px; border-bottom-width: 1px; border-right-width: 1px; }
+.btn-crosshair:hover::before,
+.btn-crosshair:hover::after { opacity: 1; }
+
+.proj-num-col {
+  border-right: 1px dashed var(--line-strong);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.8rem 0;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+
+.proj-body { padding: 1.8rem 2rem; }
+
+.project-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.08em;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.project-desc {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 55ch;
+  margin-bottom: 1rem;
+}
+
+.project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.tag {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px dashed var(--line-strong);
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.tag:hover, .tag.active {
+  background: rgba(74,154,187,0.12);
+  border-color: var(--accent);
+  color: var(--accent2);
+}
+
+.proj-side {
+  padding: 1.8rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  border-left: 1px dashed var(--line);
+  min-width: 120px;
+}
+
+.project-year { font-size: 0.58rem; letter-spacing: 0.1em; color: var(--dim); }
+.project-arrow { font-size: 0.7rem; color: var(--accent); opacity: 0; transform: translateX(-6px); transition: all 0.2s; }
+
+/* ─── WRITING ─── */
+.post-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  border-bottom: 1px dashed var(--line);
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.post-item:last-child { border-bottom: none; }
+.post-item:hover { background: rgba(74,154,187,0.04); }
+.post-item:hover .post-title { color: var(--accent2); }
+
+.post-num-col {
+  border-right: 1px dashed var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+
+.post-body { padding: 1.5rem 2rem; }
+.post-cat { font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+.post-title { font-size: 0.95rem; font-style: italic; color: var(--fg); line-height: 1.5; transition: color 0.2s; }
+.post-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.6rem; }
+
+.post-side {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.3rem;
+  border-left: 1px dashed var(--line);
+  min-width: 100px;
+}
+
+.post-date { font-size: 0.55rem; letter-spacing: 0.08em; color: var(--muted); white-space: nowrap; }
+.post-len  { font-size: 0.5rem; color: var(--dim); }
+
+/* ─── NOW PAGE ─── */
+.now-controls {
+  padding: 1.2rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px dashed var(--line-strong);
+  flex-wrap: wrap;
+}
+
+.now-controls-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  flex-shrink: 0;
+}
+
+.tag-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.tag-filter {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  background: none;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.tag-filter:hover { color: var(--accent2); border-color: var(--accent); }
+.tag-filter.active { color: var(--accent2); border-color: var(--accent); background: rgba(74,154,187,0.1); }
+
+.sort-toggle {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: none;
+  font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sort-toggle:hover { color: var(--accent2); border-color: var(--accent); }
+
+.now-list { display: flex; flex-direction: column; }
+
+.now-entry {
+  display: grid;
+  grid-template-columns: 56px 110px 1fr auto;
+  border-bottom: 1px dashed var(--line);
+  transition: background 0.15s, opacity 0.2s;
+  position: relative;
+}
+
+.now-entry:last-child { border-bottom: none; }
+.now-entry:hover { background: rgba(74,154,187,0.03); }
+.now-entry.hidden { display: none; }
+
+
+
+.now-idx {
+  border-right: 1px dashed var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.48rem;
+  color: var(--dim);
+  padding: 1.2rem 0;
+}
+
+.now-date {
+  padding: 1.2rem 1.5rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  border-right: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.now-content {
+  padding: 1.2rem 2rem;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.now-content a {
+  color: var(--accent2);
+  text-decoration: none;
+  font-style: italic;
+  transition: color 0.15s;
+}
+
+.now-content a:hover { color: var(--fg); }
+
+.now-entry-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.now-tag {
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px dashed var(--line);
+  padding: 0.15rem 0.4rem;
+}
+
+.now-side {
+  padding: 1.2rem 1.5rem;
+  border-left: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+}
+
+.now-link-icon {
+  font-size: 0.65rem;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.now-link-icon:hover { color: var(--accent2); }
+
+.now-empty {
+  padding: 3rem 2rem;
+  font-size: 0.7rem;
+  color: var(--dim);
+  font-style: italic;
+  display: none;
+}
+
+.now-empty.visible { display: block; }
+
+/* ─── ABOUT ─── */
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.about-text-col {
+  padding: 3rem 2rem;
+  border-right: 1px dashed var(--line-strong);
+}
+
+.about-text {
+  font-size: 0.78rem;
+  line-height: 1.95;
+  color: var(--muted);
+}
+
+.about-text p + p { margin-top: 1.2rem; }
+.about-text strong { color: var(--fg); font-weight: 400; }
+.about-text em { color: var(--accent2); font-style: normal; }
+
+.about-spec-col { padding: 3rem 2rem; }
+
+.spec-section-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spec-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  border-top: 1px dashed var(--line-strong);
+}
+
+.spec-table { display: flex; flex-direction: column; margin-bottom: 2.5rem; }
+
+.spec-tr {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--line);
+  gap: 1rem;
+}
+
+.spec-tr:last-child { border-bottom: none; }
+.spec-td-key { font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+.spec-td-val { font-size: 0.65rem; color: var(--fg); text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  border-top: 1px dashed var(--line-strong);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+}
+
+.footer-accent-col { border-right: 1px dashed var(--line-strong); }
+
+.footer-inner {
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copy { font-size: 0.55rem; letter-spacing: 0.08em; color: var(--dim); }
+
+.footer-links { display: flex; }
+
+.footer-links a {
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-left: 1px dashed var(--line-strong);
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--accent2); }
+
+/* ─── ANIMATIONS ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hero-coords-display { animation: fadeIn 0.5s ease 0.1s both; }
+.hero-title          { animation: fadeIn 0.6s ease 0.2s both; }
+.hero-bottom         { animation: fadeIn 0.6s ease 0.35s both; }
+.spec-block          { animation: fadeIn 0.6s ease 0.45s both; }
+.hero-links          { animation: fadeIn 0.6s ease 0.55s both; }
+
+/* ─── MOBILE ─── */
+@media (max-width: 900px) {
+  .header-coords { display: none; }
+}
+
+@media (max-width: 768px) {
+  :root { --dot-size: 20px; }
+
+  .header-nav { display: none; }
+  .hamburger  { display: flex; }
+
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-left { border-right: none; border-bottom: 1px dashed var(--line-strong); padding: 2.5rem 1.5rem; }
+  .hero-right { padding: 2.5rem 1.5rem; }
+
+  .section-header { grid-template-columns: 1fr; }
+  .section-num-col { display: none; }
+  .section-title-row { padding: 0.8rem 1.2rem; }
+
+  .project-item { grid-template-columns: 1fr; }
+  .proj-num-col { display: none; }
+  .proj-body { padding: 1.5rem 1.2rem; }
+  .proj-side { flex-direction: row; align-items: center; justify-content: flex-start; padding: 0 1.2rem 1.2rem; border-left: none; border-top: 1px dashed var(--line); min-width: 0; }
+
+  .post-item { grid-template-columns: 1fr; }
+  .post-num-col { display: none; }
+  .post-body { padding: 1.2rem 1.2rem 0.5rem; }
+  .post-side { flex-direction: row; padding: 0.5rem 1.2rem 1.2rem; border-left: none; min-width: 0; gap: 0.8rem; }
+
+  .now-entry { grid-template-columns: 40px 1fr; }
+  .now-date { display: none; }
+  .now-side { display: none; }
+  .now-content { padding: 1rem 1.2rem; }
+  .now-controls { padding: 1rem 1.2rem; gap: 1rem; }
+
+  .about-layout { grid-template-columns: 1fr; }
+  .about-text-col { border-right: none; border-bottom: 1px dashed var(--line-strong); padding: 2rem 1.2rem; }
+  .about-spec-col { padding: 2rem 1.2rem; }
+
+  footer { grid-template-columns: 1fr; }
+  .footer-accent-col { display: none; }
+  .footer-inner { flex-direction: column; gap: 1rem; align-items: flex-start; padding: 1.5rem 1.2rem; }
+  .footer-links a:first-child { border-left: none; padding-left: 0; }
+
+  .hero-links { flex-wrap: wrap; }
+}
+
+@media (max-width: 480px) {
+  .hero-left, .hero-right { padding: 2rem 1rem; }
+  .proj-body, .post-body, .now-content { padding-left: 1rem; padding-right: 1rem; }
+  .about-text-col, .about-spec-col { padding: 1.5rem 1rem; }
+  .footer-inner { padding: 1.2rem 1rem; }
+  .now-controls { padding: 0.8rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="header-logo" href="#" onclick="navigate('home'); return false;">
+      <div class="logo-name">Philip Myrvang</div>
+      <div class="logo-sub">Software Architect</div>
+    </a>
+    <div class="header-coords" id="headerCoords">63.4305° N · 10.3951° E</div>
+    <ul class="header-nav">
+      <li><a href="#" onclick="navigate('projects'); return false;" data-page="projects"><span class="nav-idx">01</span>Projects</a></li>
+      <li><a href="#" onclick="navigate('writing'); return false;"  data-page="writing"><span class="nav-idx">02</span>Writing</a></li>
+      <li><a href="#" onclick="navigate('now'); return false;"      data-page="now"><span class="nav-idx">03</span>Now</a></li>
+      <li><a href="#" onclick="navigate('about'); return false;"    data-page="about"><span class="nav-idx">04</span>About</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div id="mobileMenu" class="mobile-menu">
+  <button class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">Close ✕</button>
+  <a href="#" onclick="navigate('projects'); document.getElementById('mobileMenu').classList.remove('open'); return false;">Projects</a>
+  <a href="#" onclick="navigate('writing');  document.getElementById('mobileMenu').classList.remove('open'); return false;">Writing</a>
+  <a href="#" onclick="navigate('now');      document.getElementById('mobileMenu').classList.remove('open'); return false;">Now</a>
+  <a href="#" onclick="navigate('about');    document.getElementById('mobileMenu').classList.remove('open'); return false;">About</a>
+</div>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-coords-display" id="heroCoords">63.4305° N, 10.3951° E · TRONDHEIM, NO</div>
+      <h1 class="hero-title">
+        Building<br>
+        <span class="hl">Systems</span>
+        <span class="hl2">That Last</span>
+      </h1>
+      <div class="hero-bottom">
+        <div class="avail-badge"><span class="dot"></span>Available · Spring 2025</div>
+        <p class="hero-desc">Self-taught developer graduating NTNU with a focus on web architecture, functional programming, and AI agent systems. I care about correctness before convenience.</p>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="spec-block" data-label="// specification">
+        <div class="spec-row"><span class="spec-key">Entity</span><span class="spec-val">Philip Myrvang</span></div>
+        <div class="spec-row"><span class="spec-key">Role</span><span class="spec-val accent">Software Developer</span></div>
+        <div class="spec-row"><span class="spec-key">Location</span><span class="spec-val">Trondheim, Norway</span></div>
+        <div class="spec-row"><span class="spec-key">Education</span><span class="spec-val">BSc Informatics · NTNU</span></div>
+        <div class="spec-row"><span class="spec-key">Stack</span><span class="spec-val">TypeScript · React · Next.js</span></div>
+        <div class="spec-row"><span class="spec-key">Interests</span><span class="spec-val">FP · Architecture · Agents</span></div>
+        <div class="spec-row"><span class="spec-key">Status</span><span class="spec-val accent">Open to work</span></div>
+      </div>
+      <div class="hero-links">
+        <a href="#" class="hero-link btn-crosshair">GitHub</a>
+        <a href="#" class="hero-link btn-crosshair">LinkedIn</a>
+        <a href="#" class="hero-link btn-crosshair">Email</a>
+        <a href="#" class="hero-link btn-crosshair">CV ↗</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════ PROJECTS ══════════════ -->
+<div class="page" id="page-projects">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num-col">01</div>
+      <div class="section-title-row">
+        <span class="section-name">Projects</span>
+        <span class="section-meta">3 items · sorted by recency</span>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="proj-num-col">001</div>
+      <div class="proj-body crosshair-target">
+        <div class="project-name">agent-toolkit</div>
+        <p class="project-desc">Unified toolkit for Claude Code agents. Handles structured execution planning, context separation across fetch/synthesis/execution boundaries, and multi-repo coordination.</p>
+        <div class="project-tags">
+          <span class="tag">TypeScript</span>
+          <span class="tag">AI Agents</span>
+          <span class="tag">CLI</span>
+          <span class="tag">Architecture</span>
+        </div>
+      </div>
+      <div class="proj-side">
+        <span class="project-year">2025</span>
+        <span class="project-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="proj-num-col">002</div>
+      <div class="proj-body crosshair-target">
+        <div class="project-name">ai-code-audit</div>
+        <p class="project-desc">Multi-agent system for automated code review, security analysis, and architectural assessment across large codebases.</p>
+        <div class="project-tags">
+          <span class="tag">Multi-agent</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Security</span>
+        </div>
+      </div>
+      <div class="proj-side">
+        <span class="project-year">2025</span>
+        <span class="project-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="proj-num-col">003</div>
+      <div class="proj-body crosshair-target">
+        <div class="project-name">agent-interface</div>
+        <p class="project-desc">Research interface for scientific study search. AI agents handle retrieval, synthesis, and source ranking.</p>
+        <div class="project-tags">
+          <span class="tag">React</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">Research</span>
+        </div>
+      </div>
+      <div class="proj-side">
+        <span class="project-year">2024</span>
+        <span class="project-arrow">→</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ WRITING ══════════════ -->
+<div class="page" id="page-writing">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num-col">02</div>
+      <div class="section-title-row">
+        <span class="section-name">Writing</span>
+        <span class="section-meta">3 posts</span>
+      </div>
+    </div>
+
+    <div class="post-item reveal">
+      <div class="post-num-col">01</div>
+      <div class="post-body crosshair-target">
+        <div class="post-cat">Agents · Architecture</div>
+        <div class="post-title">On context management in long-running agents</div>
+        <div class="post-tags">
+          <span class="now-tag">agents</span>
+          <span class="now-tag">architecture</span>
+        </div>
+      </div>
+      <div class="post-side">
+        <span class="post-date">Feb 2025</span>
+        <span class="post-len">8 min</span>
+      </div>
+    </div>
+
+    <div class="post-item reveal">
+      <div class="post-num-col">02</div>
+      <div class="post-body crosshair-target">
+        <div class="post-cat">Architecture · Craft</div>
+        <div class="post-title">Why I think about software architecture like music theory</div>
+        <div class="post-tags">
+          <span class="now-tag">architecture</span>
+          <span class="now-tag">craft</span>
+        </div>
+      </div>
+      <div class="post-side">
+        <span class="post-date">Jan 2025</span>
+        <span class="post-len">6 min</span>
+      </div>
+    </div>
+
+    <div class="post-item reveal">
+      <div class="post-num-col">03</div>
+      <div class="post-body crosshair-target">
+        <div class="post-cat">Functional Programming</div>
+        <div class="post-title">Functional patterns that actually matter in TypeScript</div>
+        <div class="post-tags">
+          <span class="now-tag">fp</span>
+          <span class="now-tag">typescript</span>
+        </div>
+      </div>
+      <div class="post-side">
+        <span class="post-date">Dec 2024</span>
+        <span class="post-len">10 min</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ NOW ══════════════ -->
+<div class="page" id="page-now">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num-col">03</div>
+      <div class="section-title-row">
+        <span class="section-name">Now</span>
+        <span class="section-meta" id="now-count">— entries</span>
+      </div>
+    </div>
+
+    <div class="now-controls">
+      <span class="now-controls-label">Filter:</span>
+      <div class="tag-filters" id="tagFilters">
+        <!-- injected by JS -->
+      </div>
+      <button class="sort-toggle" id="sortToggle" onclick="toggleSort()">↓ newest first</button>
+    </div>
+
+    <div class="now-list" id="nowList">
+      <!-- injected by JS -->
+    </div>
+    <div class="now-empty" id="nowEmpty">// no entries match the current filter</div>
+  </div>
+</div>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+<div class="page" id="page-about">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num-col">04</div>
+      <div class="section-title-row">
+        <span class="section-name">About</span>
+        <span class="section-meta">v1.0 · updated 2025</span>
+      </div>
+    </div>
+    <div class="about-layout">
+      <div class="about-text-col reveal">
+        <div class="about-text">
+          <p>I started programming because I wanted to understand how things <em>actually</em> work — not just how to use them. That pull toward first principles still drives everything I build.</p>
+          <p>My work sits at the intersection of <strong>web development, functional programming, and software architecture</strong>. I care about systems that are correct by design, not by luck or test coverage alone.</p>
+          <p>Lately I've been deep in <strong>AI agent development</strong> — building tools that handle repetitive engineering work while keeping developers in control of the decisions that actually matter.</p>
+          <p>I'm self-taught, currently finishing a <strong>Bachelor's in Informatics at NTNU</strong>. I learn best by building things that stretch what I know and then figuring out why they break.</p>
+        </div>
+      </div>
+      <div class="about-spec-col reveal">
+        <div class="spec-section-label">// identity</div>
+        <div class="spec-table">
+          <div class="spec-tr"><span class="spec-td-key">Location</span><span class="spec-td-val">Trondheim, Norway</span></div>
+          <div class="spec-tr"><span class="spec-td-key">Education</span><span class="spec-td-val">BSc Informatics, NTNU</span></div>
+          <div class="spec-tr"><span class="spec-td-key">Background</span><span class="spec-td-val">Self-taught → formal</span></div>
+        </div>
+        <div class="spec-section-label">// technical</div>
+        <div class="spec-table">
+          <div class="spec-tr"><span class="spec-td-key">Primary</span><span class="spec-td-val">TypeScript, React, Next.js</span></div>
+          <div class="spec-tr"><span class="spec-td-key">Theory</span><span class="spec-td-val">Type systems, formal methods</span></div>
+          <div class="spec-tr"><span class="spec-td-key">Exploring</span><span class="spec-td-val">Effect-TS, Lean 4, Dafny</span></div>
+          <div class="spec-tr"><span class="spec-td-key">AI</span><span class="spec-td-val">Agent architecture</span></div>
+        </div>
+        <div class="spec-section-label">// currently</div>
+        <div class="spec-table">
+          <div class="spec-tr"><span class="spec-td-key">Building</span><span class="spec-td-val">agent-toolkit, this site</span></div>
+          <div class="spec-tr"><span class="spec-td-key">Reading</span><span class="spec-td-val">SICP</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-accent-col"></div>
+  <div class="footer-inner">
+    <span class="footer-copy" id="footerCoords">© 2025 Philip Myrvang · 63.4305° N, 10.3951° E</span>
+    <div class="footer-links">
+      <a href="#">GitHub</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Email</a>
+      <a href="#">RSS</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── NOW ENTRIES DATA ───
+const NOW_ENTRIES = [
+  { date: '2025-02-21', content: 'Started building portfolio with Payload CMS + Next.js', tags: ['building', 'web'] },
+  { date: '2025-02-10', content: 'Published a post on functional patterns in TypeScript', tags: ['writing', 'fp', 'typescript'], link: '#' },
+  { date: '2025-02-01', content: 'Deep in agent-toolkit context management — separating fetch / synthesis / execution is harder than it sounds', tags: ['building', 'agents', 'architecture'] },
+  { date: '2025-01-20', content: 'Exploring Effect-TS as a replacement for raw Promise chains in agent pipelines', tags: ['fp', 'typescript', 'agents'] },
+  { date: '2025-01-15', content: 'Picked up SICP again — third attempt, this time it\'s clicking', tags: ['reading', 'fp'] },
+  { date: '2025-01-08', content: 'Published a post on software architecture and music theory', tags: ['writing', 'architecture'], link: '#' },
+  { date: '2024-12-20', content: 'Finished ai-code-audit MVP — multi-agent code review actually works', tags: ['building', 'agents', 'architecture'] },
+  { date: '2024-12-05', content: 'Reading about Lean 4 and dependent types. formal verification feels increasingly practical', tags: ['reading', 'fp', 'architecture'] },
+  { date: '2024-11-18', content: 'Started agent-interface — scientific search is a great use case for structured agent pipelines', tags: ['building', 'agents'] },
+];
+
+// ─── STATE ───
+let activeTags = new Set();
+let sortAsc = false;
+
+// ─── ALL TAGS ───
+const allTags = [...new Set(NOW_ENTRIES.flatMap(e => e.tags))].sort();
+
+// ─── RENDER NOW ───
+function renderNow() {
+  const list = document.getElementById('nowList');
+  const empty = document.getElementById('nowEmpty');
+  const count = document.getElementById('now-count');
+
+  let entries = [...NOW_ENTRIES];
+  if (!sortAsc) entries.reverse();
+
+  const filtered = entries.filter(e =>
+    activeTags.size === 0 || e.tags.some(t => activeTags.has(t))
+  );
+
+  count.textContent = `${filtered.length} ${filtered.length === 1 ? 'entry' : 'entries'}`;
+
+  list.innerHTML = filtered.map((e, i) => `
+    <div class="now-entry">
+      <div class="now-idx">${String(i + 1).padStart(2, '0')}</div>
+      <div class="now-date">${e.date}</div>
+      <div class="now-content crosshair-target">
+        <span>${e.content}</span>
+        <div class="now-entry-tags">
+          ${e.tags.map(t => `<span class="now-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="now-side">
+        ${e.link ? `<a class="now-link-icon" href="${e.link}" title="Read post">↗</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  empty.classList.toggle('visible', filtered.length === 0);
+}
+
+// ─── RENDER TAG FILTERS ───
+function renderTagFilters() {
+  const container = document.getElementById('tagFilters');
+  container.innerHTML = allTags.map(tag => `
+    <button class="tag-filter ${activeTags.has(tag) ? 'active' : ''}" onclick="toggleTag('${tag}')">${tag}</button>
+  `).join('');
+}
+
+function toggleTag(tag) {
+  if (activeTags.has(tag)) activeTags.delete(tag);
+  else activeTags.add(tag);
+  renderTagFilters();
+  renderNow();
+}
+
+function toggleSort() {
+  sortAsc = !sortAsc;
+  document.getElementById('sortToggle').textContent = sortAsc ? '↑ oldest first' : '↓ newest first';
+  renderNow();
+}
+
+// ─── NAVIGATION ───
+let currentPage = 'home';
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.header-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const link = document.querySelector(`[data-page="${page}"]`);
+  if (link) link.classList.add('active');
+  currentPage = page;
+  window.scrollTo(0, 0);
+
+  // trigger reveals
+  setTimeout(() => {
+    document.querySelectorAll('#page-' + page + ' .reveal').forEach(el => {
+      observer.observe(el);
+    });
+  }, 50);
+}
+
+// ─── SCROLL REVEAL ───
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── COORDS (static) ───
+function updateCoords() {
+  const str = '63.4305° N · 10.3951° E';
+  document.getElementById('headerCoords').textContent = str;
+  document.getElementById('footerCoords').textContent = `© 2025 Philip Myrvang · ${str}`;
+}
+
+// ─── INIT ───
+renderTagFilters();
+renderNow();
+updateCoords();
+</script>
+</body>
+</html>
