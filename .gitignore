@@ -20,3 +20,5 @@ bun.lock
 
 # debug
 npm-debug.log*
+.vercel
+.env*.local
