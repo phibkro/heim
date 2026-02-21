@@ -24,8 +24,6 @@
     "next": "15.2.9",
     "payload": "^3.77.0",
     "radix-ui": "^1.4.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.5.0"
   },
@@ -33,8 +31,6 @@
     "@heim/tsconfig": "*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",

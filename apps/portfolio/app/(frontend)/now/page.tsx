@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { getPayload } from "payload"
 import config from "@payload-config"
 import { SectionHeader } from "@heim/ui"
@@ -31,10 +32,12 @@ export default async function NowPage() {
 				title="Now"
 				meta={`${entries.length} entries`}
 			/>
-			<NowFeed
-				entries={entries as NowEntry[]}
-				availableTags={Array.from(allTags.entries()).map(([slug, name]) => ({ slug, name }))}
-			/>
+			<Suspense>
+				<NowFeed
+					entries={entries as NowEntry[]}
+					availableTags={Array.from(allTags.entries()).map(([slug, name]) => ({ slug, name }))}
+				/>
+			</Suspense>
 		</div>
 	)
 }
