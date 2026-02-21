@@ -10,7 +10,7 @@
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "check-types": "tsc --noEmit",
-    "generate:types": "payload generate:types"
+    "generate:types": "bun -e \"import c from './payload.config'; import {generateTypes} from 'payload/node'; await generateTypes(await c); process.exit(0)\""
   },
   "dependencies": {
     "@heim/ui": "*",
@@ -21,11 +21,11 @@
     "clsx": "^2.1.1",
     "graphql": "^16.8.",
     "lucide-react": "^0.575.0",
-    "next": "15.3.9",
+    "next": "15.2.9",
     "payload": "^3.77.0",
     "radix-ui": "^1.4.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.5.0"
   },

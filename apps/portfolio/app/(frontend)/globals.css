@@ -108,3 +108,74 @@
     );
   }
 }
+
+/* ── Prose overrides for rich text ── */
+.prose-blueprint {
+  color: var(--fg);
+  font-size: 0.72rem;
+  line-height: 1.8;
+}
+
+.prose-blueprint h1,
+.prose-blueprint h2,
+.prose-blueprint h3 {
+  font-family: var(--font-display);
+  color: var(--fg);
+  letter-spacing: -0.02em;
+}
+
+.prose-blueprint h2 {
+  font-size: 1.4rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose-blueprint h3 {
+  font-size: 1.1rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-blueprint p {
+  margin-bottom: 1rem;
+}
+
+.prose-blueprint a {
+  color: var(--accent2);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--line);
+}
+
+.prose-blueprint a:hover {
+  border-bottom-color: var(--accent);
+}
+
+.prose-blueprint code {
+  color: var(--accent);
+  font-size: 0.65rem;
+}
+
+.prose-blueprint pre {
+  background-color: var(--bg2);
+  border: 1px dashed var(--line-strong);
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose-blueprint blockquote {
+  border-left: 2px dashed var(--accent);
+  padding-left: 1rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.prose-blueprint ul,
+.prose-blueprint ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose-blueprint li {
+  margin-bottom: 0.25rem;
+}
