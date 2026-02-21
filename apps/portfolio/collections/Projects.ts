@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload"
+import { createRevalidateHook } from "./hooks/revalidate"
 
 export const Projects: CollectionConfig = {
 	slug: "projects",
@@ -63,6 +64,7 @@ export const Projects: CollectionConfig = {
 		},
 	],
 	hooks: {
+		afterChange: [createRevalidateHook("projects")],
 		beforeValidate: [
 			({ data }) => {
 				if (data?.name && !data.slug) {

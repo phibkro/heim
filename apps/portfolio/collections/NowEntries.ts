@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload"
+import { createRevalidateHook } from "./hooks/revalidate"
 
 export const NowEntries: CollectionConfig = {
 	slug: "now-entries",
@@ -40,4 +41,7 @@ export const NowEntries: CollectionConfig = {
 			hasMany: false,
 		},
 	],
+	hooks: {
+		afterChange: [createRevalidateHook("now-entries")],
+	},
 }
