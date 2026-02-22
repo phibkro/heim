@@ -44,7 +44,7 @@ heim/
 |---|---|
 | `packages/ui/src/components/` | Blueprint design system components (`@heim/ui`) |
 | `apps/portfolio/components/ui/` | shadcn generated — run `bunx shadcn add <x>` |
-| `apps/portfolio/components/layout/` | Header, Footer, MobileMenu |
+| `apps/portfolio/components/layout/` | Header, MobileMenu |
 | `apps/portfolio/components/providers/` | PostHogProvider |
 
 ---
