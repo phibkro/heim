@@ -13,11 +13,15 @@
         "REVALIDATE_SECRET"
       ]
     },
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["transit"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["transit"],
+      "outputs": ["tsconfig.tsbuildinfo"]
     },
     "dev": {
       "cache": false,

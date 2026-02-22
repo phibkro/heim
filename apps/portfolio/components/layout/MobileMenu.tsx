@@ -14,6 +14,11 @@ function MobileOverlay({ nav, onClose }: { nav: NavItem[]; onClose: () => void }
 	const [visible, setVisible] = useState(false)
 
 	useEffect(() => {
+		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		if (prefersReducedMotion) {
+			setVisible(true)
+			return
+		}
 		requestAnimationFrame(() => setVisible(true))
 	}, [])
 

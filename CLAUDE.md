@@ -72,6 +72,7 @@ heim/
 - `bun run check-types` — typecheck all packages (turbo)
 - `cd apps/portfolio && bun -e "import c from './payload.config'; import {generateTypes} from 'payload/node'; await generateTypes(await c); process.exit(0)"` — regenerate Payload types (`payload generate:types` CLI doesn't resolve .ts imports)
 - `bunx shadcn add <component>` — add shadcn component (run from `apps/portfolio/`)
+- `cd apps/portfolio && bun seed.ts` — seed/update CMS data (upserts existing records)
 
 ---
 
@@ -83,6 +84,10 @@ heim/
 - `next.config.ts` "turbopack" warning is from `withPayload` — safe to ignore
 - React/React-dom hoisted to monorepo root; `@heim/ui` uses `peerDependencies`
 - Next.js must stay in Payload's supported range (currently 16.2.0-canary.x or 15.2.x)
+- Global `* { border-color: var(--line-strong) }` in globals.css overrides Tailwind `border-[color]` utilities — use inline `style` for dynamic border colors
+- For pseudo-element content (e.g. SpecBlock labels), use manual CSS in globals.css — Tailwind can't do `content: attr(data-label)`
+- Use CSS `::before`/`::after` for hover brackets in flex layouts — absolute-positioned child spans don't reliably track flex item height
+- MobileMenu uses `createPortal(…, document.body)` to escape Header's stacking context
 
 ---
 

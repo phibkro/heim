@@ -25,6 +25,18 @@ export default async function NowPage() {
 		}
 	}
 
+	const slimEntries = (entries as NowEntry[]).map((e) => ({
+		id: e.id,
+		content: e.content,
+		date: e.date,
+		tags: e.tags
+			? (e.tags as TagType[]).map((t) => ({ id: t.id, slug: t.slug, name: t.name }))
+			: [],
+		linkedPost: e.linkedPost
+			? { slug: (e.linkedPost as { slug: string }).slug }
+			: undefined,
+	}))
+
 	return (
 		<div className="mx-auto max-w-[var(--max-w)]">
 			<SectionHeader
@@ -32,9 +44,9 @@ export default async function NowPage() {
 				title="Now"
 				meta={`${entries.length} entries`}
 			/>
-			<Suspense>
+			<Suspense fallback={<div className="px-6 py-10 text-[0.7rem] text-[var(--dim)]">Loading...</div>}>
 				<NowFeed
-					entries={entries as NowEntry[]}
+					entries={slimEntries}
 					availableTags={Array.from(allTags.entries()).map(([slug, name]) => ({ slug, name }))}
 				/>
 			</Suspense>

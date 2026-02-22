@@ -3,10 +3,23 @@
 import { useSearchParams, useRouter } from "next/navigation"
 import { useCallback } from "react"
 import { CrosshairTarget, Tag } from "@heim/ui"
-import type { NowEntry, Post, Tag as TagType } from "@/payload-types"
+
+interface SlimTag {
+	id: number
+	slug: string
+	name: string
+}
+
+interface SlimEntry {
+	id: number
+	content: string
+	date: string
+	tags: SlimTag[]
+	linkedPost?: { slug: string }
+}
 
 interface NowFeedProps {
-	entries: NowEntry[]
+	entries: SlimEntry[]
 	availableTags: { slug: string; name: string }[]
 }
 
@@ -45,8 +58,7 @@ export function NowFeed({ entries, availableTags }: NowFeedProps) {
 
 	const filtered = entries.filter((entry) => {
 		if (activeTags.length === 0) return true
-		const entryTags = (entry.tags as TagType[] | undefined) ?? []
-		return activeTags.some((slug) => entryTags.some((t) => t.slug === slug))
+		return activeTags.some((slug) => entry.tags.some((t) => t.slug === slug))
 	})
 
 	const sorted = filtered.toSorted((a, b) => {
@@ -83,55 +95,52 @@ export function NowFeed({ entries, availableTags }: NowFeedProps) {
 
 			{/* Entries */}
 			<div className="flex flex-col">
-				{sorted.map((entry, i) => {
-					const linkedPost = entry.linkedPost as Post | undefined
-					return (
-						<div
-							key={entry.id}
-							className="grid grid-cols-[40px_1fr] border-b border-dashed border-[var(--line)] transition-colors hover:bg-[var(--accent)]/3 md:grid-cols-[56px_110px_1fr_auto]"
-						>
-							{/* Index */}
-							<div className="flex items-center justify-center border-r border-dashed border-[var(--line-strong)] py-4 text-[0.48rem] text-[var(--dim)]">
-								{String(i + 1).padStart(2, "0")}
-							</div>
-
-							{/* Date — hidden on mobile */}
-							<div className="hidden items-center border-r border-dashed border-[var(--line)] px-4 py-4 text-[0.58rem] tracking-[0.06em] whitespace-nowrap text-[var(--dim)] md:flex">
-								{new Date(entry.date).toLocaleDateString("en-US", {
-									month: "short",
-									day: "numeric",
-									year: "numeric",
-								})}
-							</div>
-
-							{/* Content */}
-							<CrosshairTarget className="flex flex-col justify-center gap-2 px-4 py-4 md:px-6">
-								<span className="text-[0.78rem] leading-[1.7] text-[var(--fg)]">
-									{entry.content}
-								</span>
-								{entry.tags && (entry.tags as TagType[]).length > 0 && (
-									<div className="flex flex-wrap gap-1.5">
-										{(entry.tags as TagType[]).map((tag) => (
-											<Tag key={tag.id} label={tag.name} size="sm" />
-										))}
-									</div>
-								)}
-							</CrosshairTarget>
-
-							{/* Side — hidden on mobile */}
-							{linkedPost ? (
-								<a
-									href={`/writing/${linkedPost.slug}`}
-									className="hidden items-center border-l border-dashed border-[var(--line)] px-5 text-[0.65rem] text-[var(--dim)] no-underline transition-colors hover:text-[var(--accent2)] md:flex"
-								>
-									↗
-								</a>
-							) : (
-								<div className="hidden border-l border-dashed border-[var(--line)] px-5 md:block" />
-							)}
+				{sorted.map((entry, i) => (
+					<div
+						key={entry.id}
+						className="grid grid-cols-[40px_1fr] border-b border-dashed border-[var(--line)] transition-colors hover:bg-[var(--accent)]/3 md:grid-cols-[56px_110px_1fr_auto]"
+					>
+						{/* Index */}
+						<div className="flex items-center justify-center border-r border-dashed border-[var(--line-strong)] py-4 text-[0.48rem] text-[var(--dim)]">
+							{String(i + 1).padStart(2, "0")}
 						</div>
-					)
-				})}
+
+						{/* Date — hidden on mobile */}
+						<div className="hidden items-center border-r border-dashed border-[var(--line)] px-4 py-4 text-[0.58rem] tracking-[0.06em] whitespace-nowrap text-[var(--dim)] md:flex">
+							{new Date(entry.date).toLocaleDateString("en-US", {
+								month: "short",
+								day: "numeric",
+								year: "numeric",
+							})}
+						</div>
+
+						{/* Content */}
+						<CrosshairTarget className="flex flex-col justify-center gap-2 px-4 py-4 md:px-6">
+							<span className="text-[0.78rem] leading-[1.7] text-[var(--fg)]">
+								{entry.content}
+							</span>
+							{entry.tags.length > 0 && (
+								<div className="flex flex-wrap gap-1.5">
+									{entry.tags.map((tag) => (
+										<Tag key={tag.id} label={tag.name} size="sm" />
+									))}
+								</div>
+							)}
+						</CrosshairTarget>
+
+						{/* Side — hidden on mobile */}
+						{entry.linkedPost ? (
+							<a
+								href={`/writing/${entry.linkedPost.slug}`}
+								className="hidden items-center border-l border-dashed border-[var(--line)] px-5 text-[0.65rem] text-[var(--dim)] no-underline transition-colors hover:text-[var(--accent2)] md:flex"
+							>
+								↗
+							</a>
+						) : (
+							<div className="hidden border-l border-dashed border-[var(--line)] px-5 md:block" />
+						)}
+					</div>
+				))}
 				{sorted.length === 0 && (
 					<div className="px-6 py-10 text-[0.7rem] italic text-[var(--dim)]">
 						// no entries match the current filter
