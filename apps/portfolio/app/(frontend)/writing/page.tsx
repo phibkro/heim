@@ -1,6 +1,6 @@
 import { getPayload } from "payload"
 import config from "@payload-config"
-import { RowItem, SectionHeader, Tag } from "@heim/ui"
+import { RowItem, SectionHeader } from "@heim/ui"
 import { ScrollReveal } from "@/components/ScrollReveal"
 import type { Post, Tag as TagType } from "@/payload-types"
 

@@ -22,9 +22,9 @@ bunx oxfmt --write "$FILE_PATH" 2>/dev/null
 # Lint (only portfolio files — they have the tsconfig)
 case "$FILE_PATH" in
   */apps/portfolio/*)
-    bunx oxlint --tsconfig apps/portfolio/tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious -A react-in-jsx-scope "$FILE_PATH"
+    bunx oxlint -c packages/config/oxlintrc.json --tsconfig apps/portfolio/tsconfig.json "$FILE_PATH"
     ;;
   *)
-    bunx oxlint -D correctness -D suspicious "$FILE_PATH"
+    bunx oxlint -c packages/config/oxlintrc.json "$FILE_PATH"
     ;;
 esac

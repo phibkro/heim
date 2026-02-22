@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "oxlint --tsconfig tsconfig.json --nextjs-plugin --react-plugin -D correctness -D suspicious -A react-in-jsx-scope",
+    "lint": "oxlint -c node_modules/@heim/config/oxlintrc.json --tsconfig tsconfig.json",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "check-types": "tsc --noEmit",
@@ -28,7 +28,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
-    "@heim/tsconfig": "*",
+    "@heim/config": "*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "shadcn": "^3.8.5",

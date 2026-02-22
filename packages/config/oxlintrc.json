@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicolo-ribaudo/oxc/json-schema-for-oxlint-config/npm/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "deny",
+    "suspicious": "deny"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "allow",
+    "react/jsx-no-comment-textnodes": "allow"
+  },
+  "plugins": ["react", "nextjs"]
+}

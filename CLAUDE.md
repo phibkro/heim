@@ -33,8 +33,7 @@ heim/
     portfolio/        ← Next.js + Payload site
   packages/
     ui/               ← @heim/ui, shared blueprint design system
-    tsconfig/         ← @heim/tsconfig
-    eslint-config/    ← @heim/eslint-config
+    config/           ← @heim/config, shared tsconfig + oxlint + oxfmt
 ```
 
 ---

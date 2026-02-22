@@ -73,6 +73,7 @@ export default function HomePage() {
 						>
 							Email
 						</a>
+						{/* oxlint-disable-next-line nextjs/no-html-link-for-pages -- external file, not a Next.js route */}
 						<a
 							href="/cv"
 							className="flex-1 border border-dashed border-[var(--line-strong)] px-3 py-3 text-center text-[0.58rem] tracking-[0.12em] uppercase text-[var(--muted)] no-underline transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 hover:text-[var(--accent2)]"

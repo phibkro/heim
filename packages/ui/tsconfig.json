@@ -1,5 +1,5 @@
 {
-  "extends": "@heim/tsconfig/react-library.json",
+  "extends": "@heim/config/tsconfig-react-library.json",
   "compilerOptions": {
     "outDir": "dist"
   },
