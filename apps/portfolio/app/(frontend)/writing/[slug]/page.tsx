@@ -61,6 +61,10 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 					{post.content && <RichText data={post.content} />}
 				</div>
 			</div>
+
+			<div className="px-6 py-4 text-[0.5rem] tracking-[0.08em] text-[var(--dim)]">
+				© {new Date().getFullYear()} Philip Bjørknes Krogh
+			</div>
 		</div>
 	)
 }

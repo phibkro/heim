@@ -8,9 +8,9 @@ interface SectionHeaderProps {
 export function SectionHeader({ index, title, meta, className = "" }: SectionHeaderProps) {
 	return (
 		<div
-			className={`sticky top-[var(--header-h)] z-10 grid grid-cols-[var(--col-index)_1fr] items-center border-b border-dashed border-[var(--line-strong)] bg-[var(--bg)]/92 backdrop-blur-[12px] ${className}`}
+			className={`sticky top-[var(--header-h)] z-10 grid grid-cols-[var(--col-index)_1fr] border-b border-dashed border-[var(--line-strong)] bg-[var(--bg)]/92 backdrop-blur-[12px] ${className}`}
 		>
-			<span className="flex h-full items-center justify-center border-r border-dashed border-[var(--line-strong)] text-[0.45rem] tracking-[0.08em] text-[var(--dim)]">
+			<span className="flex items-center justify-center border-r border-dashed border-[var(--line-strong)] py-3 text-[0.5rem] tracking-[0.15em] text-[var(--dim)] [transform:rotate(180deg)] [writing-mode:vertical-rl]">
 				{index}
 			</span>
 			<div className="flex items-center justify-between px-4 py-3">

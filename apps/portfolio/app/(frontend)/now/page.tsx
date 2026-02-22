@@ -38,6 +38,10 @@ export default async function NowPage() {
 					availableTags={Array.from(allTags.entries()).map(([slug, name]) => ({ slug, name }))}
 				/>
 			</Suspense>
+
+			<div className="px-6 py-4 text-[0.5rem] tracking-[0.08em] text-[var(--dim)]">
+				© {new Date().getFullYear()} Philip Bjørknes Krogh
+			</div>
 		</div>
 	)
 }

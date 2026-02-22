@@ -41,8 +41,8 @@
     --bg: oklch(10% 0.015 220); /* page background */
     --bg2: oklch(13% 0.015 220); /* elevated surface, cards */
     --fg: oklch(85% 0.025 210); /* primary text */
-    --muted: oklch(42% 0.03 215); /* secondary text, placeholders */
-    --dim: oklch(30% 0.025 215); /* tertiary, index nums, coords */
+    --muted: oklch(50% 0.035 215); /* secondary text, placeholders */
+    --dim: oklch(36% 0.03 215); /* tertiary, index nums, coords */
 
     /* ── Accent ── */
     --accent: oklch(58% 0.09 220); /* blueprint blue, primary */
@@ -107,6 +107,92 @@
       var(--bg) 100%
     );
   }
+}
+
+/* ── Crosshair brackets on row content ── */
+.crosshair-content {
+  position: relative;
+}
+
+.crosshair-content::before,
+.crosshair-content::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.crosshair-content::before {
+  top: 0;
+  left: 0;
+  border-top: 1px solid var(--accent);
+  border-left: 1px solid var(--accent);
+}
+
+.crosshair-content::after {
+  right: 0;
+  bottom: 0;
+  border-right: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+
+.group:hover .crosshair-content::before,
+.group:hover .crosshair-content::after {
+  opacity: 1;
+}
+
+/* ── Spec block ── */
+.spec-block {
+  border: 1px dashed var(--line-strong);
+  padding: 1.5rem;
+  position: relative;
+}
+
+.spec-block::before {
+  content: attr(data-label);
+  position: absolute;
+  top: -0.6rem;
+  left: 1rem;
+  background: var(--bg);
+  padding: 0 0.5rem;
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--line);
+  gap: 1rem;
+}
+
+.spec-row-last {
+  border-bottom: none;
+}
+
+.spec-key {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.spec-val {
+  font-size: 0.65rem;
+  color: var(--fg);
+  text-align: right;
+}
+
+.spec-val-accent {
+  color: var(--accent2);
 }
 
 /* ── Prose overrides for rich text ── */
@@ -180,6 +266,51 @@
   margin-bottom: 0.25rem;
 }
 
+/* ── Animations ── */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 oklch(78% 0.18 145 / 0.5);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 5px oklch(78% 0.18 145 / 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-fade-1 {
+  animation: fadeIn 0.5s ease 0.1s both;
+}
+.hero-fade-2 {
+  animation: fadeIn 0.6s ease 0.2s both;
+}
+.hero-fade-3 {
+  animation: fadeIn 0.6s ease 0.35s both;
+}
+.hero-fade-4 {
+  animation: fadeIn 0.6s ease 0.45s both;
+}
+.hero-fade-5 {
+  animation: fadeIn 0.6s ease 0.55s both;
+}
+
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--dim);
+}
+
 /* ── Scroll reveal ── */
 .reveal {
   opacity: 0;
@@ -191,3 +322,4 @@
   opacity: 1;
   transform: translateY(0);
 }
+

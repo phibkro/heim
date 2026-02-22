@@ -9,21 +9,25 @@ interface TagProps {
 }
 
 export function Tag({ label, active, onClick, size = "sm", className = "" }: TagProps) {
-	const sizeClasses = size === "sm" ? "text-[0.5rem] px-2 py-0.5" : "text-[0.58rem] px-3 py-1"
+	const sizeClasses = size === "sm" ? "text-[0.45rem] px-2.5 py-1" : "text-[0.5rem] px-3 py-1"
 
 	const stateClasses = active
-		? "bg-[var(--accent)]/12 border-[var(--accent)] text-[var(--accent2)]"
-		: "border-[var(--line-strong)] text-[var(--accent)] hover:bg-[var(--accent)]/12 hover:border-[var(--accent)] hover:text-[var(--accent2)]"
+		? "text-[var(--accent2)]"
+		: "border-[var(--line-strong)] text-[var(--muted)] hover:bg-[var(--accent)]/12 hover:border-[var(--accent)] hover:text-[var(--accent2)]"
+
+	const activeStyle = active
+		? { backgroundColor: "oklch(58% 0.09 220 / 0.12)", borderColor: "var(--accent)" }
+		: undefined
 
 	const base = `inline-flex items-center tracking-[0.12em] uppercase border border-dashed transition-colors ${sizeClasses} ${stateClasses} ${className}`
 
 	if (onClick) {
 		return (
-			<button type="button" onClick={onClick} className={`cursor-pointer ${base}`}>
+			<button type="button" onClick={onClick} className={`cursor-pointer ${base}`} style={activeStyle}>
 				{label}
 			</button>
 		)
 	}
 
-	return <span className={base}>{label}</span>
+	return <span className={base} style={activeStyle}>{label}</span>
 }
