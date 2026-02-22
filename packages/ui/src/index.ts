@@ -1,6 +1,4 @@
 export { AnnotationLabel } from "./components/AnnotationLabel"
-export { BlueprintBox } from "./components/BlueprintBox"
-export { BtnCrosshair } from "./components/BtnCrosshair"
 export { CrosshairTarget } from "./components/CrosshairTarget"
 export { RowItem } from "./components/RowItem"
 export { SectionHeader } from "./components/SectionHeader"
