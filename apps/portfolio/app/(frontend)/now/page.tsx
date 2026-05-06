@@ -5,6 +5,7 @@ import { SectionHeader } from "@heim/ui"
 import type { NowEntry, Tag as TagType } from "@/payload-types"
 import { NowFeed } from "./NowFeed"
 
+export const dynamic = "force-dynamic"
 export const revalidate = 60
 
 export default async function NowPage() {

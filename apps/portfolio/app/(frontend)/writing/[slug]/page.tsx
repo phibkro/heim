@@ -5,6 +5,7 @@ import { RichText } from "@payloadcms/richtext-lexical/react"
 import { AnnotationLabel, Tag } from "@heim/ui"
 import type { Post, Tag as TagType } from "@/payload-types"
 
+export const dynamic = "force-dynamic"
 export const revalidate = false
 
 export async function generateStaticParams() {

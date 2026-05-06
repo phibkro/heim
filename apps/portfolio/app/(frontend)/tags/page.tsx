@@ -3,6 +3,7 @@ import config from "@payload-config"
 import { RowItem, SectionHeader } from "@heim/ui"
 import type { Tag as TagType } from "@/payload-types"
 
+export const dynamic = "force-dynamic"
 export const revalidate = false
 
 export default async function TagsPage() {

@@ -4,6 +4,7 @@ import { RowItem, SectionHeader } from "@heim/ui"
 import { ScrollReveal } from "@/components/ScrollReveal"
 import type { Post, Tag as TagType } from "@/payload-types"
 
+export const dynamic = "force-dynamic"
 export const revalidate = false
 
 function estimateReadTime(content: unknown): string {

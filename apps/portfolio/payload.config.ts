@@ -32,6 +32,12 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL || '',
     },
+    // Sync Drizzle-generated schema to postgres on first server
+    // connect (no migration files needed). Equivalent to Prisma's
+    // `db push`. For personal-app deploy where schema lives in this
+    // file alone — promote to committed migrations if the schema
+    // ever needs to evolve in production with rollback safety.
+    push: true,
   }),
   sharp,
   plugins: [],

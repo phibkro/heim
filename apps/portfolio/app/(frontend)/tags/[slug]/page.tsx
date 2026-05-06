@@ -5,6 +5,7 @@ import Link from "next/link"
 import { SectionHeader, Tag } from "@heim/ui"
 import type { Post, Project, NowEntry, Tag as TagType } from "@/payload-types"
 
+export const dynamic = "force-dynamic"
 export const revalidate = false
 
 export async function generateStaticParams() {

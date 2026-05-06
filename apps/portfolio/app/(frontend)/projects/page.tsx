@@ -4,6 +4,7 @@ import { RowItem, SectionHeader, Tag } from "@heim/ui"
 import { ScrollReveal } from "@/components/ScrollReveal"
 import type { Project, Tag as TagType } from "@/payload-types"
 
+export const dynamic = "force-dynamic"
 export const revalidate = false
 
 export default async function ProjectsPage() {
