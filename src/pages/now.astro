@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import SectionHeader from "../components/ui/SectionHeader.astro";
+import NowFeed from "../components/NowFeed.tsx";
+import { tagName } from "../lib/tags.ts";
+
+const entries = await getCollection("now");
+
+// Build the slim, serialisable shape NowFeed consumes. Dates serialise
+// to ISO strings — Date objects don't survive props transfer to a
+// React island.
+const slim = entries.map((e) => ({
+  id: e.id,
+  content: e.data.content,
+  date: e.data.date.toISOString(),
+  tags: e.data.tags.map((slug) => ({ slug, name: tagName(slug) })),
+  linkedPostSlug: e.data.linkedPost,
+}));
+
+const tagSet = new Set<string>();
+for (const e of entries) for (const t of e.data.tags) tagSet.add(t);
+const availableTags = [...tagSet].sort().map((slug) => ({ slug, name: tagName(slug) }));
+---
+
+<Base title="Now — Philip Bjørknes Krogh">
+  <div class="mx-auto max-w-[var(--max-w)]">
+    <SectionHeader index="03" title="Now" meta={`${entries.length} entries`} />
+    <NowFeed entries={slim} availableTags={availableTags} client:load />
+    <div class="px-6 py-4 text-[0.5rem] tracking-[0.08em] text-[var(--dim)]">
+      © {new Date().getFullYear()} Philip Bjørknes Krogh
+    </div>
+  </div>
+</Base>

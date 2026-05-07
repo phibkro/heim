@@ -1,0 +1,39 @@
+---
+// Reveal-on-scroll wrapper. IntersectionObserver runs at page load and
+// adds `.reveal-visible` once the element enters the viewport. Stagger
+// distributes the start time so a list animates in sequence.
+//
+// Pure Astro + vanilla JS — no React island. The animation itself is
+// CSS-driven via the `.reveal` / `.reveal-visible` classes in
+// globals.css. `prefers-reduced-motion: reduce` is handled in the CSS,
+// not the script (the CSS strips the transition; the script still runs
+// but the visual effect is a no-op).
+interface Props {
+  stagger?: number;
+  class?: string;
+}
+const { stagger = 0, class: className = "" } = Astro.props;
+---
+
+<div class={`reveal ${className}`} data-stagger={stagger}>
+  <slot />
+</div>
+
+<script>
+  const reveals = document.querySelectorAll<HTMLElement>(".reveal");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          const stagger = Number(el.dataset.stagger ?? "0");
+          el.style.animationDelay = `${stagger * 80}ms`;
+          el.classList.add("reveal-visible");
+          observer.unobserve(el);
+        }
+      }
+    },
+    { threshold: 0.08 },
+  );
+  for (const el of reveals) observer.observe(el);
+</script>

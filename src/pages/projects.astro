@@ -1,0 +1,61 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import SectionHeader from "../components/ui/SectionHeader.astro";
+import RowItem from "../components/ui/RowItem.astro";
+import Tag from "../components/ui/Tag.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
+import { tagName } from "../lib/tags.ts";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Base title="Projects — Philip Bjørknes Krogh">
+  <div class="mx-auto max-w-[var(--max-w)]">
+    <SectionHeader index="01" title="Projects" meta={`${projects.length} items`} />
+    <div>
+      {projects.map((project, i) => (
+        <ScrollReveal stagger={i}>
+          <RowItem
+            index={String(i + 1).padStart(3, "0")}
+            href={project.data.url ?? undefined}
+          >
+            <div>
+              <h2
+                class="font-[family-name:var(--font-display)] text-[1.6rem] leading-none tracking-[0.08em] text-[var(--fg)] transition-colors group-hover:text-[var(--accent2)]"
+              >
+                {project.data.name}
+              </h2>
+              <p class="mt-3 max-w-[55ch] text-[0.72rem] leading-[1.8] text-[var(--muted)]">
+                {project.data.description}
+              </p>
+              {project.data.tags.length > 0 && (
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {project.data.tags.map((slug) => (
+                    <Tag label={tagName(slug)} />
+                  ))}
+                </div>
+              )}
+            </div>
+            <Fragment slot="side">
+              <span class="text-[0.58rem] tracking-[0.1em] text-[var(--dim)]">
+                {project.data.year}
+              </span>
+              <span
+                class="text-[0.7rem] text-[var(--accent)] opacity-0 -translate-x-1.5 transition-all group-hover:opacity-100 group-hover:translate-x-0"
+              >
+                →
+              </span>
+            </Fragment>
+          </RowItem>
+        </ScrollReveal>
+      ))}
+    </div>
+
+    <div class="px-6 py-4 text-[0.5rem] tracking-[0.08em] text-[var(--dim)]">
+      © {new Date().getFullYear()} Philip Bjørknes Krogh
+    </div>
+  </div>
+</Base>

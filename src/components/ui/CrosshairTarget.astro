@@ -1,0 +1,19 @@
+---
+interface Props {
+  class?: string;
+  size?: number;
+}
+const { class: className = "", size = 10 } = Astro.props;
+---
+
+<div class={`relative ${className}`}>
+  <span
+    class="pointer-events-none absolute top-0 left-0 border-t border-l border-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100"
+    style={`width: ${size}px; height: ${size}px;`}
+  />
+  <span
+    class="pointer-events-none absolute right-0 bottom-0 border-r border-b border-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100"
+    style={`width: ${size}px; height: ${size}px;`}
+  />
+  <slot />
+</div>

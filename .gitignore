@@ -1,24 +1,23 @@
+# build output
+dist/
+.astro/
+
 # dependencies
 node_modules/
-
-# build
-.next/
-dist/
-.turbo/
 
 # env
 .env
 .env.local
 .env.*.local
 
+# logs
+npm-debug.log*
+.vercel
+
 # system
 .DS_Store
 *.pem
 
-# lock
-bun.lock
-
-# debug
-npm-debug.log*
-.vercel
-.env*.local
+# claude
+.claude/
+.direnv/

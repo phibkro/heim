@@ -1,0 +1,22 @@
+---
+interface Row {
+  key: string;
+  value: string;
+  accent?: boolean;
+}
+interface Props {
+  label: string;
+  rows: Row[];
+  class?: string;
+}
+const { label, rows, class: className = "" } = Astro.props;
+---
+
+<div class={`spec-block ${className}`} data-label={`// ${label}`}>
+  {rows.map((row, i) => (
+    <div class={`spec-row ${i === rows.length - 1 ? "spec-row-last" : ""}`}>
+      <span class="spec-key">{row.key}</span>
+      <span class={`spec-val ${row.accent ? "spec-val-accent" : ""}`}>{row.value}</span>
+    </div>
+  ))}
+</div>

@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import Tag from "../../components/ui/Tag.astro";
+import { tagName, allTagSlugs } from "../../lib/tags.ts";
+
+export async function getStaticPaths() {
+  return allTagSlugs().map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+if (!slug) throw new Error("missing slug");
+
+const [posts, projects, nows] = await Promise.all([
+  getCollection("posts", (p) => p.data.status === "published"),
+  getCollection("projects"),
+  getCollection("now"),
+]);
+
+type FeedItem =
+  | { type: "post"; date: number; data: (typeof posts)[number] }
+  | { type: "project"; date: number; data: (typeof projects)[number] }
+  | { type: "now"; date: number; data: (typeof nows)[number] };
+
+const feed: FeedItem[] = [
+  ...posts
+    .filter((p) => p.data.tags.includes(slug))
+    .map((p) => ({ type: "post" as const, date: p.data.publishedAt.getTime(), data: p })),
+  ...projects
+    .filter((p) => p.data.tags.includes(slug))
+    .map((p) => ({
+      type: "project" as const,
+      date: new Date(`${p.data.year}-01-01`).getTime(),
+      data: p,
+    })),
+  ...nows
+    .filter((n) => n.data.tags.includes(slug))
+    .map((n) => ({ type: "now" as const, date: n.data.date.getTime(), data: n })),
+].sort((a, b) => b.date - a.date);
+
+const name = tagName(slug);
+---
+
+<Base title={`${name} — Philip Bjørknes Krogh`}>
+  <div class="mx-auto max-w-[var(--max-w)]">
+    <SectionHeader index="—" title={name} meta={`${feed.length} items`} />
+    <div>
+      {feed.map((item) => (
+        <div class="border-b border-dashed border-[var(--line)] px-4 py-4">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <Tag label={item.type} size="sm" />
+              <div class="mt-2">
+                {item.type === "post" && (
+                  <a
+                    href={`/writing/${item.data.id}`}
+                    class="text-[0.85rem] text-[var(--fg)] no-underline hover:text-[var(--accent2)]"
+                  >
+                    {item.data.data.title}
+                  </a>
+                )}
+                {item.type === "project" && (
+                  <span
+                    class="font-[family-name:var(--font-display)] text-[1.1rem] tracking-[-0.02em] text-[var(--fg)]"
+                  >
+                    {item.data.data.name}
+                  </span>
+                )}
+                {item.type === "now" && (
+                  <p class="text-[0.72rem] text-[var(--fg)]">{item.data.data.content}</p>
+                )}
+              </div>
+            </div>
+            <span class="shrink-0 text-[0.5rem] tracking-[0.08em] text-[var(--dim)]">
+              {new Date(item.date).toLocaleDateString("en-US", {
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Base>

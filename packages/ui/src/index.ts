@@ -1,6 +1,0 @@
-export { AnnotationLabel } from "./components/AnnotationLabel"
-export { CrosshairTarget } from "./components/CrosshairTarget"
-export { RowItem } from "./components/RowItem"
-export { SectionHeader } from "./components/SectionHeader"
-export { SpecBlock } from "./components/SpecBlock"
-export { Tag } from "./components/Tag"

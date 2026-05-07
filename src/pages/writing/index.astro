@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import RowItem from "../../components/ui/RowItem.astro";
+import ScrollReveal from "../../components/ScrollReveal.astro";
+import { tagName } from "../../lib/tags.ts";
+
+const posts = (await getCollection("posts", (p) => p.data.status === "published"))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+function estimateReadTime(body: string | undefined): string {
+  const words = (body ?? "").split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 200));
+  return `${minutes} min`;
+}
+---
+
+<Base title="Writing — Philip Bjørknes Krogh">
+  <div class="mx-auto max-w-[var(--max-w)]">
+    <SectionHeader index="02" title="Writing" meta={`${posts.length} posts`} />
+    <div>
+      {posts.map((post, i) => {
+        const tags = post.data.tags;
+        const category = tags.map(tagName).join(" · ");
+        return (
+          <ScrollReveal stagger={i}>
+            <RowItem index={String(i + 1).padStart(2, "0")} href={`/writing/${post.id}`}>
+              <div>
+                {category && (
+                  <div class="mb-2 text-[0.5rem] tracking-[0.15em] uppercase text-[var(--accent)]">
+                    {category}
+                  </div>
+                )}
+                <h2
+                  class="text-[0.95rem] italic text-[var(--fg)] transition-colors group-hover:text-[var(--accent2)]"
+                >
+                  {post.data.title}
+                </h2>
+              </div>
+              <Fragment slot="side">
+                <span class="text-[0.55rem] tracking-[0.08em] whitespace-nowrap text-[var(--muted)]">
+                  {post.data.publishedAt.toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                <span class="text-[var(--dim)]">{estimateReadTime(post.body)}</span>
+              </Fragment>
+            </RowItem>
+          </ScrollReveal>
+        );
+      })}
+    </div>
+
+    <div class="px-6 py-4 text-[0.5rem] tracking-[0.08em] text-[var(--dim)]">
+      © {new Date().getFullYear()} Philip Bjørknes Krogh
+    </div>
+  </div>
+</Base>

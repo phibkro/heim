@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import RowItem from "../../components/ui/RowItem.astro";
+import { tagName, allTagSlugs } from "../../lib/tags.ts";
+
+const [posts, projects, nows] = await Promise.all([
+  getCollection("posts", (p) => p.data.status === "published"),
+  getCollection("projects"),
+  getCollection("now"),
+]);
+
+const counts = new Map<string, number>();
+for (const item of [...posts, ...projects, ...nows]) {
+  for (const slug of item.data.tags) {
+    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+  }
+}
+
+const used = allTagSlugs()
+  .filter((slug) => counts.has(slug))
+  .map((slug) => ({ slug, name: tagName(slug), count: counts.get(slug)! }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<Base title="Tags — Philip Bjørknes Krogh">
+  <div class="mx-auto max-w-[var(--max-w)]">
+    <SectionHeader index="—" title="Tags" meta={`${used.length} tags`} />
+    <div>
+      {used.map((tag, i) => (
+        <RowItem index={String(i + 1).padStart(2, "0")} href={`/tags/${tag.slug}`}>
+          <span class="text-[0.85rem] text-[var(--accent)]">{tag.name}</span>
+          <Fragment slot="side"><span>{tag.count} items</span></Fragment>
+        </RowItem>
+      ))}
+    </div>
+  </div>
+</Base>
