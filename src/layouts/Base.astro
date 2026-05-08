@@ -8,8 +8,13 @@ interface Props {
 }
 const {
   title = "Philip Bjørknes Krogh",
-  description = "Developer portfolio",
+  description = "Developer portfolio — projects, writing, what I'm currently up to.",
 } = Astro.props;
+
+// Canonical URL for this page — `Astro.site` is set in
+// astro.config.mjs (`site: https://me.phibkro.org`). Astro.url.pathname
+// is the current page's path; together they form the og:url.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <!doctype html>
@@ -18,11 +23,21 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {/* Open Graph — share previews on Slack, Discord, Twitter, etc. */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Philip Bjørknes Krogh" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
