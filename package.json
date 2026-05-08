@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.9",
     "@astrojs/react": "^4.4.2",
+    "@sentry/astro": "^10.52.0",
     "@tailwindcss/vite": "^4.2.4",
     "astro": "^5.18.1",
     "react": "^19.2.6",
