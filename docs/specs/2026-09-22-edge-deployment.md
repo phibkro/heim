@@ -1,6 +1,8 @@
 # Deploy Heim at the Cloudflare edge
 
 Frozen: yes
+Status: deployed and accepted on 2026-09-22. The homelab runtime retired after production acceptance.
+
 Revision: 2026-09-22. The deployment disables the additional `workers.dev`
 route.
 

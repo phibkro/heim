@@ -4,9 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  // Public-facing canonical URL — drives @astrojs/sitemap output
-  // and the og:url tags in Base.astro. Tailnet shadow at
-  // heim.nori.lan still works for direct/dev access.
+  // Public-facing canonical URL for the sitemap and og:url tags.
   site: "https://me.phibkro.org",
   integrations: [react(), sitemap()],
   vite: {

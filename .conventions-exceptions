@@ -1,0 +1,4 @@
+divergences:
+  - key: linter
+    value: astro-check-only
+    reason: The current gate uses Astro and TypeScript diagnostics plus the static build; adopting the foundry Oxlint and Oxfmt pair is separate product work.

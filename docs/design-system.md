@@ -1,405 +1,84 @@
-# Design System Spec
-## Philip Myrvang Portfolio
+# Design system
 
-> Blueprint-themed dark UI. Technical drawing aesthetic — dot grids, dashed borders, measurement annotations, crosshair targets. Every element should feel like it belongs in an engineering diagram.
+Heim uses a blueprint-style dark interface.
+The runtime source is `src/styles/globals.css` and the components under `src/components/`.
+The file `docs/prototype.html` is a historical visual reference.
+It is not a source for routes, content, or current technology choices.
 
----
+## Visual rules
 
-## `globals.css`
+Keep these rules in new components:
 
-This is the source of truth for all design tokens. Shadcn reads from these CSS variables directly, so overriding them here themes the whole system — no component-level overrides required.
+- Use sharp corners.
+- Use dashed borders for structural divisions.
+- Use the dot grid as the page background.
+- Use IBM Plex Mono for body text.
+- Use Bebas Neue for display headings.
+- Use the blue accent for focus, hover, and status emphasis.
+- Keep text readable against the dark background.
 
-```css
-@import "tailwindcss";
-@import "tw-animate-css";
+Do not copy token values into components.
+Use the custom properties from `globals.css`.
 
-@custom-variant dark (&:is(.dark *));
+| Token | Purpose |
+|---|---|
+| `--bg` | Page background |
+| `--bg2` | Elevated surface |
+| `--fg` | Primary text |
+| `--muted` | Secondary text |
+| `--dim` | Tertiary labels |
+| `--accent` | Primary accent |
+| `--accent2` | Hover accent |
+| `--line` | Subtle dashed rule |
+| `--line-strong` | Strong dashed rule |
 
-@theme inline {
-  /* ── Fonts ── */
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-mono:    'IBM Plex Mono', monospace;
-
-  /* ── Shadcn semantic aliases → our tokens ── */
-  --color-background:          var(--bg);
-  --color-foreground:          var(--fg);
-  --color-card:                var(--bg2);
-  --color-card-foreground:     var(--fg);
-  --color-popover:             var(--bg2);
-  --color-popover-foreground:  var(--fg);
-  --color-primary:             var(--accent);
-  --color-primary-foreground:  var(--bg);
-  --color-secondary:           var(--bg2);
-  --color-secondary-foreground: var(--fg);
-  --color-muted:               var(--bg2);
-  --color-muted-foreground:    var(--muted);
-  --color-accent:              var(--accent);
-  --color-accent-foreground:   var(--bg);
-  --color-destructive:         oklch(55% 0.22 25);
-  --color-border:              var(--line-strong);
-  --color-input:               var(--line-strong);
-  --color-ring:                var(--accent);
-
-  /* ── Radius ── */
-  --radius: 0rem;  /* sharp corners throughout — override locally if ever needed */
-}
-
-@layer base {
-  :root {
-    /* ── Base palette (oklch) ──────────────────────────────────────
-       oklch(lightness% chroma hue)
-       Blueprint blue hue axis: ~215–220
-    ─────────────────────────────────────────────────────────────── */
-    --bg:      oklch(10% 0.015 220);  /* #080c10  page background              */
-    --bg2:     oklch(13% 0.015 220);  /* #0c1118  elevated surface, cards       */
-    --fg:      oklch(85% 0.025 210);  /* #c8d8e8  primary text                 */
-    --muted:   oklch(42% 0.030 215);  /* #506070  secondary text, placeholders  */
-    --dim:     oklch(30% 0.025 215);  /* #3a4a5a  tertiary, index nums, coords  */
-
-    /* ── Accent ── */
-    --accent:  oklch(58% 0.090 220);  /* #4a9abb  blueprint blue, primary       */
-    --accent2: oklch(72% 0.090 215);  /* #7bc4e0  hover states, lighter accent  */
-
-    /* ── Borders — oklch with alpha channel ── */
-    --line:        oklch(58% 0.090 220 / 0.15);  /* subtle dashed border   */
-    --line-strong: oklch(58% 0.090 220 / 0.30);  /* prominent dashed border */
-
-    /* ── Status ── */
-    --success: oklch(78% 0.18 145);   /* #4ade80  availability dot             */
-
-    /* ── Layout constants ── */
-    --header-h:  57px;
-    --dot-size:  24px;
-    --max-w:     1400px;
-    --col-index: 56px;   /* left index column width in row layouts */
-  }
-
-  @media (max-width: 768px) {
-    :root {
-      --dot-size: 20px;
-    }
-  }
-
-  * {
-    border-color: var(--line-strong);
-  }
-
-  body {
-    background-color: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-mono);
-    font-weight: 300;
-  }
-
-  /* ── Global dot grid background ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image: radial-gradient(
-      circle,
-      oklch(58% 0.090 220 / 0.18) 1px,
-      transparent 1px
-    );
-    background-size: var(--dot-size) var(--dot-size);
-  }
-
-  /* ── Vignette — fades dot grid toward edges ── */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    background: radial-gradient(
-      ellipse 80% 80% at 50% 50%,
-      transparent 30%,
-      var(--bg) 100%
-    );
-  }
-}
-```
-
-> **`--radius: 0rem`** — shadcn uses `--radius` everywhere for border-radius. Zero gives sharp corners sitewide without touching individual components. Override locally with `rounded-sm` on the rare component that needs softening (e.g. a toast).
-
----
-
-## Color Reference
-
-| Token | oklch | Hex approx | Usage |
-|---|---|---|---|
-| `--bg` | `oklch(10% 0.015 220)` | `#080c10` | Page background |
-| `--bg2` | `oklch(13% 0.015 220)` | `#0c1118` | Cards, elevated surfaces |
-| `--fg` | `oklch(85% 0.025 210)` | `#c8d8e8` | Primary text |
-| `--muted` | `oklch(42% 0.030 215)` | `#506070` | Secondary text, placeholders |
-| `--dim` | `oklch(30% 0.025 215)` | `#3a4a5a` | Index numbers, annotations |
-| `--accent` | `oklch(58% 0.090 220)` | `#4a9abb` | Blueprint blue, primary accent |
-| `--accent2` | `oklch(72% 0.090 215)` | `#7bc4e0` | Hover states, lighter accent |
-| `--line` | `oklch(58% 0.090 220 / 0.15)` | — | Subtle dashed borders |
-| `--line-strong` | `oklch(58% 0.090 220 / 0.30)` | — | Prominent dashed borders |
-| `--success` | `oklch(78% 0.18 145)` | `#4ade80` | Availability indicator |
-| `--destructive` | `oklch(55% 0.22 25)` | — | Errors (rare) |
-
-oklch alpha syntax: `oklch(L% C H / alpha)`. The alpha on `--line` and `--line-strong` lets the dot grid show faintly through borders.
-
----
-
-## Typography
-
-All typography is handled via CSS variables and Tailwind utility classes — no TS token files.
-
-| Token | Value | Usage |
-|---|---|---|
-| `--font-display` | Bebas Neue | Hero, section names, project titles |
-| `--font-mono` | IBM Plex Mono | Body, labels, metadata — everything else |
-
-Configured via `next/font` in `app/layout.tsx` (root layout).
-
-| Size | Value | Usage |
-|---|---|---|
-| xxs | `0.45rem` | Nav index numbers |
-| xs | `0.5rem` | Labels, tags, annotations |
-| sm | `0.58rem` | Secondary text, metadata |
-| base | `0.72rem` | Body copy, descriptions |
-| md | `0.85rem` | Post titles |
-| lg | `1.1rem` | Section headers (display font) |
-| xl | `1.6rem` | Project names (display font) |
-| hero | `clamp(3.5rem, 7vw, 7rem)` | Hero headline |
-
-Font weights: light (300), regular (400), medium (500).
-Letter spacing: tight (-0.02em), normal (0), wide (0.08em), wider (0.12em), widest (0.18em).
-
----
-
-## Spacing
-
-Base-8 scale. All values are multiples of `0.5rem` (8px). Use Tailwind spacing utilities directly (`p-2`, `gap-4`, etc.).
-
----
-
-## Borders
-
-All borders are **dashed**, not solid. This is a hard constraint of the blueprint aesthetic — never use `border-solid` anywhere. Use Tailwind `border-dashed` + CSS variable colors (`border-[var(--line)]`, `border-[var(--line-strong)]`, `border-[var(--accent)]`).
-
----
+Tailwind maps its semantic colors to these custom properties.
+The global radius is zero.
 
 ## Components
 
-### `<SectionHeader>`
-
-Sticky header at the top of each content section.
-
-```tsx
-// components/blueprint/SectionHeader.tsx
-interface SectionHeaderProps {
-  index: string    // "01"
-  title: string    // "Projects"
-  meta?: string    // "3 items · sorted by recency"
-}
-```
-
-- Left column (`--col-index` wide): vertical index number, `border-right: strong`
-- `position: sticky`, `top: var(--header-h)`, `z-index: 10`
-- Backdrop blur + semi-transparent bg for legibility when scrolling
-
----
-
-### `<SpecBlock>`
-
-Labeled dashed-border box for key/value pairs. Used on homepage and about page.
-
-```tsx
-// components/blueprint/SpecBlock.tsx
-interface SpecBlockProps {
-  label: string    // "// specification"
-  rows: { key: string; value: string; accent?: boolean }[]
-}
-```
-
-- Label floats above top border: `position: absolute; top: -0.6rem; background: var(--bg)`
-- Row separator: `border-bottom: subtle`
-- `.accent` value uses `color: var(--accent2)`
-
----
-
-### `<CrosshairTarget>`
-
-Wrapper that reveals blueprint corner brackets when its parent row is hovered. Applied to the **content cell** of a row — not the full row width.
-
-```tsx
-// components/blueprint/CrosshairTarget.tsx
-interface CrosshairTargetProps {
-  children: React.ReactNode
-  className?: string
-  size?: number   // bracket arm length in px, default 10
-}
-```
-
-```tsx
-// usage — parent needs className="group"
-<div className="group grid grid-cols-[56px_1fr_auto]">
-  <span className="index-col">01</span>
-  <CrosshairTarget className="p-6">
-    <h3>Project name</h3>
-    <p>Description</p>
-  </CrosshairTarget>
-  <span className="meta-col">2025</span>
-</div>
-```
-
-Brackets are `::before` (top-left) and `::after` (bottom-right), opacity driven by `group-hover:opacity-100`.
-
----
-
-### `<Tag>`
-
-Dashed pill for taxonomy. Static (display-only) or interactive (toggleable filter).
-
-```tsx
-// components/blueprint/Tag.tsx
-interface TagProps {
-  label: string
-  active?: boolean
-  onClick?: () => void   // if provided, renders as a button
-  size?: 'sm' | 'md'
-}
-```
-
-States: default `color: accent, border: line-strong` → hover/active `bg: accent/12, border: accent, color: accent2`.
-
----
-
-### `<RowItem>`
-
-Base layout component for project, post, and now-entry rows.
-
-```tsx
-// components/blueprint/RowItem.tsx
-interface RowItemProps {
-  index: string
-  children: React.ReactNode   // content cell — wrapped in CrosshairTarget internally
-  side?: React.ReactNode      // right-aligned metadata column
-  href?: string
-}
-```
-
-Grid: `var(--col-index) 1fr auto`. Index column hidden below `md` breakpoint.
-
----
-
-### `<BlueprintBox>`
-
-Generic dashed-border container. The primitive underlying `SpecBlock`.
-
-```tsx
-// components/blueprint/BlueprintBox.tsx
-interface BlueprintBoxProps {
-  children: React.ReactNode
-  className?: string
-  corners?: boolean   // show static crosshair corners (not hover-driven)
-}
-```
-
----
-
-### `<AnnotationLabel>`
-
-Small uppercase label matching the `// label` pattern used throughout.
-
-```tsx
-// components/blueprint/AnnotationLabel.tsx
-interface AnnotationLabelProps {
-  children: React.ReactNode
-  withLine?: boolean   // trailing decorative dashed line
-}
-```
-
----
-
-### `<BtnCrosshair>`
-
-Button or anchor with crosshair corner brackets that appear on hover.
-
-```tsx
-// components/blueprint/BtnCrosshair.tsx
-interface BtnCrosshairProps {
-  children: React.ReactNode
-  href?: string
-  onClick?: () => void
-  className?: string
-}
-```
-
----
-
-## Shadcn
-
-Shadcn is the base layer for interactive primitives. The `globals.css` above already remaps all shadcn color variables to your tokens — components like `<Dialog>`, `<Tooltip>`, and `<Command>` inherit the right colors with no further work.
-
-**Init:**
-```bash
-npx shadcn@latest init
-# TypeScript · App Router · no default styles (globals.css is yours)
-```
-
-**Pull in selectively:**
-
-| Component | When |
+| Component | Responsibility |
 |---|---|
-| `tooltip` | Icon-only buttons needing hover labels |
-| `dialog` | Lightboxes, confirmations |
-| `command` | Search / command palette (future) |
-| `dropdown-menu` | Context menus (future) |
+| `Header.astro` | Shared site navigation |
+| `MobileMenu.tsx` | Interactive mobile navigation |
+| `NowFeed.tsx` | Tag filtering and date sorting |
+| `ScrollReveal.astro` | Progressive reveal behavior |
+| `ui/AnnotationLabel.astro` | Small technical annotation |
+| `ui/CrosshairTarget.astro` | Crosshair interaction frame |
+| `ui/RowItem.astro` | Indexed content row |
+| `ui/SectionHeader.astro` | Numbered section heading |
+| `ui/SpecBlock.astro` | Labeled specification block |
+| `ui/Tag.astro` | Shared tag presentation |
 
-**Never use** shadcn's default color theme, hardcoded color classes, or `rounded-*` utilities — `--radius: 0` handles corners globally.
+Reuse these components before you create another visual mechanism.
+Use Astro by default.
+Use React only when the browser must own interactive state.
 
-Custom blueprint components live in `packages/ui/src/components/` (`@heim/ui`), separate from shadcn's auto-generated `apps/portfolio/components/ui/`. The distinction matters: `ui/` is generated and can be re-generated; `@heim/ui` is yours.
+## Layout
 
----
+The shared page shell limits content with `--max-w`.
+The desktop layout uses the indexed left column from `--col-index`.
+Responsive rules remove decorative detail before they reduce readability.
 
-## Interaction Patterns
+Keep the existing hierarchy:
 
-**Crosshair hover** — brackets on content cell, `group` / `group-hover:` pattern. Also standalone on `BtnCrosshair`.
+1. Display heading
+2. Section number and title
+3. Content rows or specification blocks
+4. Dim metadata and annotations
 
-**Tag filtering** — multi-select, state in URL query params for shareability. Client-side filtering, no debounce needed at this data volume.
+## Accessibility
 
-**Sort toggle** — `↓ newest first` / `↑ oldest first`, URL query param alongside tags.
+Use semantic links, buttons, headings, and lists.
+Keep a visible focus state for every control.
+Do not use color as the only status indicator.
+Keep interactive targets usable at narrow viewport widths.
+Respect reduced-motion preferences in new motion effects.
 
-**Scroll reveal** — `IntersectionObserver`, `threshold: 0.08`. `opacity-0 translate-y-4` → visible. Fires once, not on re-entry. Stagger siblings with `animation-delay`.
+## Change procedure
 
----
-
-## Responsive Breakpoints
-
-Use Tailwind breakpoint utilities directly (`sm:`, `md:`, `lg:`). Key breakpoint: `md` (768px) — grids collapse and index columns hide.
-
----
-
-## File Structure
-
-```
-apps/portfolio/
-  app/(frontend)/
-    globals.css                ← single source of truth — tokens + shadcn overrides
-  components/
-    ui/                        ← shadcn auto-generated (don't hand-edit)
-    layout/
-      Header.tsx
-      Footer.tsx
-      MobileMenu.tsx
-    ScrollReveal.tsx
-
-packages/ui/src/
-  components/                  ← @heim/ui blueprint system
-    SectionHeader.tsx
-    SpecBlock.tsx
-    CrosshairTarget.tsx
-    Tag.tsx
-    RowItem.tsx
-    BlueprintBox.tsx
-    AnnotationLabel.tsx
-    BtnCrosshair.tsx
-  index.ts                     ← barrel export
-```
+1. Change shared tokens in `src/styles/globals.css`.
+2. Change shared structure in `src/components/`.
+3. Use page-local classes only for page-specific layout.
+4. Run `bun run check`.
+5. Inspect the changed page at desktop and mobile widths.

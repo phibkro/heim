@@ -1,5 +1,5 @@
 {
-  description = "heim — Philip's portfolio site (Turborepo + bun + Next.js + Payload)";
+  description = "Heim — Astro portfolio site deployed as Cloudflare Worker assets";
 
   inputs = {
     lab.url = "github:phibkro/homelab";

@@ -1,46 +1,30 @@
 # References
-## Official documentation for tools used in heim
 
-When implementing a tool for the first time, read the official docs before writing any code.
+Use official documentation for the current Heim stack.
+The repository source remains authoritative for the selected versions and behavior.
 
----
+## Application
 
-## Core
-
-| Tool | Docs |
+| Tool | Official documentation |
 |---|---|
-| Next.js 15 | https://nextjs.org/docs |
-| Payload CMS 3.x | https://payloadcms.com/docs |
-| Turborepo | https://turbo.build/repo/docs |
-| Bun | https://bun.sh/docs |
+| Astro | <https://docs.astro.build/> |
+| Astro content collections | <https://docs.astro.build/en/guides/content-collections/> |
+| Astro React integration | <https://docs.astro.build/en/guides/integrations-guide/react/> |
+| Astro sitemap integration | <https://docs.astro.build/en/guides/integrations-guide/sitemap/> |
+| React | <https://react.dev/> |
+| Tailwind CSS | <https://tailwindcss.com/docs> |
+| TypeScript | <https://www.typescriptlang.org/docs/> |
+| Bun | <https://bun.sh/docs> |
 
-## Database & ORM
+## Deployment
 
-| Tool | Docs |
+| Tool | Official documentation |
 |---|---|
-| Neon (PostgreSQL) | https://neon.tech/docs |
-| Payload Postgres adapter | https://payloadcms.com/docs/database/postgres |
+| Alchemy v2 | <https://v2.alchemy.run/> |
+| Alchemy Cloudflare Workers | <https://v2.alchemy.run/cloudflare/compute/workers/> |
+| Cloudflare Workers static assets | <https://developers.cloudflare.com/workers/static-assets/> |
+| Cloudflare Worker custom domains | <https://developers.cloudflare.com/workers/configuration/routing/custom-domains/> |
 
-## Styling & UI
-
-| Tool | Docs |
-|---|---|
-| Tailwind CSS v4 | https://tailwindcss.com/docs |
-| shadcn/ui | https://ui.shadcn.com/docs |
-| Radix UI primitives | https://www.radix-ui.com/primitives/docs |
-
-## Tooling
-
-| Tool | Docs |
-|---|---|
-| oxlint | https://oxc.rs/docs/guide/usage/linter |
-| oxfmt | https://oxc.rs/docs/guide/usage/formatter |
-| TypeScript | https://www.typescriptlang.org/docs |
-
-## Analytics & Hosting
-
-| Tool | Docs |
-|---|---|
-| PostHog (Next.js integration) | https://posthog.com/docs/libraries/next-js |
-| Vercel | https://vercel.com/docs |
-| Vercel + Neon integration | https://neon.tech/docs/guides/vercel |
+Read `docs/architecture.md` before an architecture change.
+Read `docs/design-system.md` before a visual change.
+Read `docs/setup.md` before a release.

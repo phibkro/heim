@@ -1,201 +1,71 @@
 # Architecture
-## heim/apps/portfolio
 
----
+Heim is a static Astro site.
+Alchemy publishes the generated files as assets in one Cloudflare Worker.
+The production system has no database or application server.
 
-## Payload Collections
+## Source layout
 
-Define in `apps/portfolio/collections/`. Each file exports a `CollectionConfig`.
+| Path | Responsibility |
+|---|---|
+| `src/content.config.ts` | Schemas for projects, posts, and now entries |
+| `src/content/` | Markdown content that Astro loads during the build |
+| `src/pages/` | Static routes and build-time content queries |
+| `src/layouts/Base.astro` | HTML shell, metadata, fonts, and global styles |
+| `src/components/` | Astro components and the two React islands |
+| `src/lib/tags.ts` | Tag slug and display-name registry |
+| `src/styles/globals.css` | Design tokens and shared visual rules |
+| `astro.config.mjs` | React, sitemap, Tailwind, and canonical-site configuration |
+| `alchemy.run.ts` | Cloudflare Worker, asset, and custom-domain resources |
 
-### Tags
-```ts
-slug: 'tags'
-fields:
-  - name: string, required, unique
-  - slug: string, required, unique (auto-generated from name via beforeValidate hook)
-admin:
-  useAsTitle: 'name'
-```
+## Content model
 
-Shared across Posts, Projects, and NowEntries. One collection, many relations.
+`src/content.config.ts` is the schema source.
+Astro stops the build when Markdown frontmatter does not match these schemas.
 
-### Posts
-```ts
-slug: 'posts'
-fields:
-  - title: string, required
-  - slug: string, required, unique (auto-generated from title)
-  - content: richText (Lexical)
-  - excerpt: textarea
-  - publishedAt: date, required
-  - tags: relationship → Tags, hasMany: true
-  - status: select ['draft', 'published'], defaultValue: 'draft'
-admin:
-  useAsTitle: 'title'
-  defaultColumns: ['title', 'status', 'publishedAt', 'tags']
-access:
-  read: ({ req }) => req.user ? true : { status: { equals: 'published' } }
-```
+| Collection | Required fields | Optional fields |
+|---|---|---|
+| `projects` | `name`, `description`, `year`, `tags`, `order` | `featured`, `url` |
+| `posts` | `title`, `excerpt`, `publishedAt`, `tags` | `status` |
+| `now` | `date`, `content`, `tags` | `linkedPost` |
 
-### Projects
-```ts
-slug: 'projects'
-fields:
-  - name: string, required
-  - slug: string, required, unique
-  - description: textarea, required
-  - longDescription: richText (optional)
-  - url: text (optional)
-  - repoUrl: text (optional)
-  - year: number, required
-  - featured: checkbox, defaultValue: false
-  - tags: relationship → Tags, hasMany: true
-  - order: number (manual sort)
-admin:
-  useAsTitle: 'name'
-  defaultColumns: ['name', 'year', 'featured', 'tags']
-```
+Published posts use the Markdown body as article content.
+Project and now entries use frontmatter only.
+Tag slugs resolve through `src/lib/tags.ts`.
 
-### NowEntries
-```ts
-slug: 'now-entries'
-fields:
-  - content: textarea, required (~200 chars max)
-  - date: date, required
-  - tags: relationship → Tags, hasMany: true
-  - linkedPost: relationship → Posts, hasMany: false (optional)
-defaultSort: '-date'
-admin:
-  useAsTitle: 'content'
-  defaultColumns: ['content', 'date', 'tags']
-```
+## Routes
 
----
+| Route | Source |
+|---|---|
+| `/` | `src/pages/index.astro` |
+| `/about` | `src/pages/about.astro` |
+| `/projects` | `src/pages/projects.astro` |
+| `/writing` | `src/pages/writing/index.astro` |
+| `/writing/<slug>` | `src/pages/writing/[slug].astro` |
+| `/now` | `src/pages/now.astro` |
+| `/tags` | `src/pages/tags/index.astro` |
+| `/tags/<slug>` | `src/pages/tags/[slug].astro` |
+| `/404` | `src/pages/404.astro` |
 
-## Routes & Rendering
+Astro creates these routes during the build.
+The canonical site is `https://me.phibkro.org`.
+The sitemap and page metadata use that value.
 
-```
-/                  → ISR, revalidate: 3600
-/projects          → ISR + on-demand revalidation
-/writing           → ISR + on-demand revalidation
-/writing/[slug]    → ISR per post + on-demand revalidation
-/now               → ISR, revalidate: 60
-/tags              → ISR + on-demand revalidation
-/tags/[slug]       → ISR + on-demand revalidation, generateStaticParams for known tags
-```
+## Browser code
 
----
+Most components render static HTML.
+`MobileMenu.tsx` and `NowFeed.tsx` are the only React islands.
+Both use `client:load` because their controls need browser state.
 
-## On-demand Revalidation
+`NowFeed` stores its tag and sort state in URL query parameters.
+This makes filtered views linkable and preserves browser navigation.
 
-`apps/portfolio/app/(payload)/api/revalidate/route.ts`
+## Deployment boundary
 
-Protected by `REVALIDATE_SECRET` request header. Called from Payload `afterChange` hooks on all collections. Calls `revalidatePath()` for affected routes.
+Run `bun run dev` for the complete local Worker path.
+Run `bun run check` before a release.
+Inspect `bun run plan` before any production change.
+Run `bun run deploy` only with operator approval.
 
----
-
-## Data Fetching
-
-Use Payload's local API in server components — never the REST API.
-
-```ts
-import { getPayload } from 'payload'
-import config from '@payload-config'
-
-const payload = await getPayload({ config })
-
-// fetch published posts
-const posts = await payload.find({
-  collection: 'posts',
-  where: { status: { equals: 'published' } },
-  sort: '-publishedAt',
-  depth: 1,  // resolves tag relations (name + slug only)
-})
-```
-
-Always pass `depth: 1` for tag relations. Always filter `status: 'published'` on Posts from frontend routes.
-
----
-
-## Tag System
-
-`/tags/[slug]` queries all collections in parallel and merges results into a unified feed.
-
-```ts
-const [posts, projects, nowEntries] = await Promise.all([
-  payload.find({
-    collection: 'posts',
-    where: { 'tags.slug': { equals: slug }, status: { equals: 'published' } },
-    depth: 1,
-  }),
-  payload.find({
-    collection: 'projects',
-    where: { 'tags.slug': { equals: slug } },
-    depth: 1,
-  }),
-  payload.find({
-    collection: 'now-entries',
-    where: { 'tags.slug': { equals: slug } },
-    depth: 1,
-  }),
-])
-```
-
-Merge, sort by date, render with a type badge (post / project / now).
-
----
-
-## Now Page — Client-side Filtering
-
-Fetch all NowEntries server-side, pass to a client component. Filter state in URL query params:
-
-- `?tags=agents,fp` — comma-separated active tags (multi-select)
-- `?sort=asc` or `?sort=desc` (default `desc`)
-
-Use `useSearchParams` + `useRouter` — not `useState` — so filters are shareable and back button works.
-
----
-
-## Rich Text
-
-```tsx
-import { RichText } from '@payloadcms/richtext-lexical/react'
-
-<div className="prose">
-  <RichText data={post.content} />
-</div>
-```
-
-Override Tailwind Typography's default prose colors in `globals.css` to match design tokens.
-
----
-
-## App Router File Structure
-
-```
-app/
-  (frontend)/
-    layout.tsx            ← globals.css, Header, Footer
-    page.tsx              ← homepage
-    projects/page.tsx
-    writing/
-      page.tsx
-      [slug]/page.tsx
-    now/page.tsx
-    tags/
-      page.tsx
-      [slug]/page.tsx
-  (payload)/
-    admin/[[...segments]]/page.tsx
-    api/
-      [...payload]/route.ts
-      revalidate/route.ts
-
-collections/
-  Tags.ts
-  Posts.ts
-  Projects.ts
-  NowEntries.ts
-
-payload.config.ts
-```
+The repository owns the Worker and `me.phibkro.org` custom domain.
+The homelab does not build, route, or serve Heim.

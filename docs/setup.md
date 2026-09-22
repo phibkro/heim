@@ -38,18 +38,15 @@ Inspect the plan before deployment.
 The plan must contain an assets-only Worker for `me.phibkro.org`.
 It must not add a database or an application server bundle.
 
-For the first cutover:
-
-1. Record the current Tunnel, Caddy route, DNS record, and public response.
-2. Remove the `me.phibkro.org` Tunnel route or conflicting DNS record immediately before the approved deployment.
-3. Run the deployment and verify the complete site before removing the homelab runtime.
+The Cloudflare cutover completed on September 22, 2026. The public hostname and
+static assets now belong to this repository's Worker. No Tunnel, Caddy route,
+or homelab runtime remains in the release path.
 
 ## Rollback
 
-For the first cutover, detach `me.phibkro.org` from the Worker.
-Restore the previous DNS record and Tunnel route.
-Keep the homelab runtime until production acceptance completes.
+Use a clean worktree at the last known-good revision. Install its lock file, run
+its checks, inspect `bun run plan`, and run `bun run deploy` only after operator
+approval. Verify the complete site and generated sitemap.
 
-For later releases, use a clean worktree at the last known-good revision.
-Install its lock file, run its checks, inspect `bun run plan`, and run `bun run deploy` after operator approval.
-Do not use `alchemy destroy` as a rollback command.
+Do not use `alchemy destroy` as a rollback command. The former Tunnel and
+homelab runtime are cutover history, not available fallback infrastructure.
