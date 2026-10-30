@@ -26,6 +26,7 @@ CI checks the repository but does not deploy it.
 
 The first plan can bootstrap or upgrade the shared `alchemy-state-store` Worker.
 That is a provider mutation and is part of the required approval.
+To do it on its own, run `bunx alchemy state bootstrap --backend cloudflare`.
 
 ```sh
 bun install --frozen-lockfile
