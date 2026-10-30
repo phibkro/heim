@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # A deploy started by hand, for example a retry.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,3 +26,91 @@ jobs:
 
       - name: Check
         run: bun run check
+
+  # Whether this run's commit is still main's head, decided outside the production environment: a run for an older
+  # commit stops here and creates no deployment record (a skipped deploy inside the environment would record a success).
+  head:
+    needs: [build]
+    if: vars.DEPLOYMENTS == 'enabled' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      latest: ${{ steps.current.outputs.latest }}
+    steps:
+      - id: current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          head=$(gh api "repos/$REPOSITORY/commits/main" --jq .sha)
+          if [ "$head" = "$GITHUB_SHA" ]; then echo "latest=true" >> "$GITHUB_OUTPUT"; else echo "main moved on to $head; its run deploys"; fi
+
+  # Production deploy after every merge to main (a person's or Renovate's), once the checks above pass.
+  # Off until the repository variable DEPLOYMENTS is `enabled`. Alchemy reads the Cloudflare credentials from the
+  # environment in CI (CI=true) and keeps its state in the account's shared state store (Cloudflare.state()).
+  deploy:
+    needs: [build, head]
+    if: needs.head.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # Rare race: a newer commit reached main after the head job ran. Fail, so this run records a failed deployment
+      # (never a guard base) instead of deploying over the newer commit; the newer commit's run deploys.
+      - name: This is still main's head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          head=$(gh api "repos/$REPOSITORY/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then echo "::error::main moved on to $head; its run deploys"; exit 1; fi
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - run: bun install --frozen-lockfile
+
+      # `--yes` below also lets Alchemy bootstrap or upgrade the account's shared state store, and Alchemy treats a
+      # failed probe as a missing store. So deploy only when the store answers at exactly this Alchemy's version. This narrows,
+      # not closes, the window: Alchemy's own probe can still fail in the seconds after this one. Bootstrap or upgrade the
+      # store deliberately from a machine, for every repository at once.
+      - name: The state store answers at this Alchemy's version
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # The Cloudflare store's own contract version (State/HttpStateApi.ts has an unrelated one of the same name).
+          api=$(find node_modules/alchemy/src node_modules/@alchemy.run/cloudflare/src -path '*StateStore/Api.ts' 2>/dev/null | head -1)
+          expected=$(sed -nE 's/^export const STATE_STORE_VERSION = ([0-9]+) as const;$/\1/p' "${api:-/dev/null}")
+          test -n "$expected" || { echo "::error::cannot read the state store version this Alchemy expects"; exit 1; }
+          subdomain=$(curl -fsS --max-time 20 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | jq -r '.result.subdomain // empty')
+          test -n "$subdomain" || { echo "::error::cannot read the account's workers.dev subdomain"; exit 1; }
+          observed=""
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            observed=$(curl -fsS --max-time 10 "https://alchemy-state-store.$subdomain.workers.dev/version" | jq -r '.version // empty' || true)
+            [ -n "$observed" ] && break
+            sleep 3
+          done
+          if [ "$observed" != "$expected" ]; then
+            echo "::error::The state store answers v${observed:-nothing}; this Alchemy expects v$expected. Bootstrap or upgrade it from a machine, then rerun."
+            exit 1
+          fi
+          echo "State store v$observed"
+
+      - name: Deploy
+        run: bun run deploy --yes
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
