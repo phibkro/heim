@@ -30,4 +30,4 @@ flagged as drift by `conventions-check`; record real divergences in
 - Content: edit Markdown under `src/content/{projects,posts,now}`. `src/content.config.ts` owns the accepted frontmatter schemas; `src/lib/tags.ts` owns tag display names.
 - UI: preserve the blueprint visual language in `src/styles/globals.css` and existing components—sharp corners, dashed structural borders, dot grid, monospace body, and display headings. `docs/prototype.html` is historical design reference, not runtime source.
 - Public contract: `me.phibkro.org` is an assets-only Cloudflare Worker. There is no database, application server, Tunnel route, or homelab runtime.
-- Deployment: inspect `bun run plan`, then use `bun run deploy` only with operator approval. CI checks; it does not deploy.
+- Deployment: CI deploys stage `production` (`bun run deploy`) after every merge to `main` once the checks pass, when the repository variable `DEPLOYMENTS` is `enabled` (secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, environment `production`). A local `bun run deploy` still needs operator approval; inspect `bun run plan` first.
