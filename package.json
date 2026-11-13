@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "2.0.0-beta.84",
-    "@astrojs/sitemap": "3.6.0",
+    "@astrojs/sitemap": "3.7.5",
     "@effect/platform-bun": "4.1.0",
     "@effect/platform-node": "4.1.0",
     "@types/node": "^20.19.40",
